@@ -1,23 +1,31 @@
-
-<script type="text/ng-template" id="tree-tooltip.html">
-  <ul id="tree-tooltip">
-    <li><a ng-click="displayMetadata(treeNode);"><i class="glyphicon glyphicon-info-sign"></i> &nbsp; Metadata </a></li>
-  </ul>
+<script type="text/ng-template" id="tree-tooltip-metadata.html">
+    <table class="tooltip-table" click-outside="closeThis()">
+        <tr>
+            <td class="key-label"><b>Fullname:</b></td>
+            <td class="value-label">{{ctrl.metadataObj.fullname}}</td>
+        </tr>
+        <tr ng-repeat="(key, value) in ctrl.metadataObj.body" class="popover-table-row"
+            ng-class-even="popover-even-row">
+            <td class="key-label"><b>{{key}}:</b></td>
+            <td class="value-label" ng-if="ctrl.isURL(value)"><a href="{{value}}" target="_blank">{{value}}</a></td>
+            <td class="value-label" ng-if="!ctrl.isURL(value)">{{value}}</td>
+        </tr>
+    </table>
 </script>
 
 <!--------------------------------------------------------------------------------------------------------------------->
 <!-- START Node template -->
 
 <script type="text/ng-template" id="nodes_renderer.html">
-  <div ui-tree-handle class="tree-node tree-node-content" ng-click="populateChilds(node);"
-       data-drag="node.type !== 'FAILED_CALL'" jqyoui-draggable="{placeholder: 'keep'}"
-       data-jqyoui-options="{containment: 'document', appendTo: 'body', helper: 'clone'}" ng-model="node"
-       style="overflow-x: hidden !important; white-space: nowrap;">
+    <div ui-tree-handle class="tree-node tree-node-content tree-node-custom"
+         ng-click="ctrl.populateChildren(node);" data-drag="node.type !== 'FAILED_CALL'"
+         jqyoui-draggable="{placeholder: 'keep'}"
+         data-jqyoui-options="{containment: 'document', appendTo: 'body', helper: 'clone'}" ng-model="node">
 
-    <!--icons-->
-    <a data-nodrag ng-click="toggle(this)">
-      <i  class="ts-node-icon"
-          ng-class="{ 'glyphicon glyphicon-folder-close': collapsed && node.type === 'UNKNOWN',
+        <!--icons-->
+        <a data-nodrag ng-click="toggle(this)">
+            <i class="ts-node-icon"
+               ng-class="{ 'glyphicon glyphicon-folder-close': collapsed && node.type === 'UNKNOWN',
                       'glyphicon glyphicon-folder-open': !collapsed && node.type === 'UNKNOWN',
                       'mdi mdi-blur': node.type === 'HIGH_DIMENSIONAL',
                       'mdi mdi-numeric': node.type === 'NUMERIC',
@@ -26,74 +34,88 @@
                       'mdi mdi-tag': node.type === 'CATEGORICAL_OPTION',
                       'mdi mdi-alert text-danger': node.type === 'FAILED_CALL',
                       'mdi mdi-fullscreen': node.type === 'UNDEF'}">
-      </i> &nbsp;
-    </a>
+            </i> &nbsp;
+        </a>
 
-    <!--node title-->
-    <a  uib-popover-template="'tree-tooltip.html'"
-        popover-placement="right"
-        popover-trigger="outsideClick"
-        ng-click="displayToolTip($event, node)"
-        ng-class="{'text-grey': node.type === 'FAILED_CALL'}">
-        {{node.title}}
-      <span class="quantity-num">({{node.total}})</span>
-    </a>
+        <!--node title-->
+        <a uib-popover-template="'tree-tooltip-metadata.html'"
+           popover-title="Metadata"
+           popover-placement="right"
+           popover-trigger="none"
+           popover-is-open="node.isPopOpen"
+           base-ui-right-click="ctrl.displayMetadata(node); "
+           click-outside="node.isPopOpen = false"
+           ng-class="{'text-grey': node.type === 'FAILED_CALL'}"
+        >
+            {{node.title}}
+            <b ng-show="!node.isLoading && node.total">({{node.total}})</b>
+            <span class="glyphicon glyphicon-spin" ng-class="{'glyphicon-refresh': node.isLoading}"></span>
+        </a>
 
-  </div>
+    </div>
 
-  <!--node children-->
-  <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-    <li ng-repeat="node in node.nodes"
-        ui-tree-node
-        ng-include="'nodes_renderer.html'"
-        data-collapsed="treeConfig.collapsed">
-    </li>
-  </ol>
+    <!--node children-->
+    <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
+        <li ng-repeat="node in node.nodes"
+            ui-tree-node
+            ng-include="'nodes_renderer.html'"
+            data-collapsed="ctrl.treeConfig.collapsed">
+        </li>
+    </ol>
 
 </script>
 <!--------------------------------------------------------------------------------------------------------------------->
 <!-- END Node template -->
 
-<span><h4>{{title}}</h4></span>
+<span><h4>{{studyAccordionCtrl.title}}</h4></span>
+<uib-accordion close-others="false">
+    <div ng-repeat="study in studies" class="ts-study-accordion">
 
-<div  ng-repeat="study in studies"
-      ng-controller="StudyCtrl"
-      class="ts-study-accordion">
+        <uib-accordion-group is-open="study.open" ng-if="study.hide != true" >
+            <!--heading-->
+            <uib-accordion-heading>
+          <span ng-click="ctrl.populateChildren(study);">
+            <a class="glyphicon glyphicon-folder-close ts-node-icon"
+               ng-class="{
+                   'glyphicon-folder-close' : !study.open,
+                   'glyphicon-folder-open' : study.open
+                 }"
+            >
+            </a>
+            &nbsp;
+            <a uib-popover-template="'tree-tooltip-metadata.html'"
+               popover-title="Metadata"
+               popover-placement="right"
+               popover-trigger="none"
+               popover-is-open="study.isPopOpen"
+               base-ui-right-click="ctrl.displayMetadata(study);"
+               click-outside="study.isPopOpen = false">
+                {{study._embedded.ontologyTerm.name}}
+                <span class="glyphicon glyphicon-spin" ng-class="{'glyphicon-refresh': study.isLoading}"></span>
+            </a>
+          </span>
+            </uib-accordion-heading>
 
-  <accordion-group  is-open="study.open"
-                    ng-if="studyShown === '' || study._embedded.ontologyTerm.name.includes(studyShown)">
-    <!--heading-->
-    <accordion-heading ng-click="getTree(study);" >
-      <span ng-click="getTree(study);" >
-      <a class="glyphicon glyphicon-folder-close ts-node-icon"
-           ng-class="{
-             'glyphicon-folder-close' : !opened,
-             'glyphicon-folder-open' : opened
-           }"
-           >
-      </a>
-      &nbsp;
-      <a uib-popover-template="'tree-tooltip.html'"
-         popover-placement="right"
-         popover-trigger="outsideClick"
-         ng-click="displayToolTip($event, study)">
-          {{study._embedded.ontologyTerm.name}}
-      </a>
-      <span class="glyphicon glyphicon-spin" ng-class="{'glyphicon-refresh': treeLoading}"></span>
-    </span>
-    </accordion-heading>
-    <!--content-->
-    <div ui-tree id="tree-root" data-drag-enabled="treeConfig.drag" data-drop-enabled="false" ng-if="!callFailure">
-      <ol ui-tree-nodes="" ng-model="tree.nodes">
-        <li ng-repeat="node in tree.nodes" ui-tree-node ng-include="'nodes_renderer.html'"
-          data-collapsed="treeConfig.collapsed"></li>
-      </ol>
+            <!--content-->
+            <div ui-tree id="tree-root" data-drag-enabled="ctrl.treeConfig.drag" data-drop-enabled="false"
+                 ng-if="!callFailure">
+                <ol ui-tree-nodes="" ng-model="study.nodes" ng-class="{hidden: collapsed}">
+                    <li ng-repeat="node in study.nodes"
+                        ui-tree-node
+                        ng-include="'nodes_renderer.html'"
+                        data-collapsed="ctrl.treeConfig.collapsed">
+                        {{node.title}}
+                    </li>
+                </ol>
+            </div>
+
+            <!--error handler-->
+            <div ng-if="callFailure">
+                <small>Data could not be loaded.</small>
+            </div>
+        </uib-accordion-group>
+
     </div>
-    <div ng-if="callFailure">
-      <small>Data could not be loaded.</small>
-    </div>
-  </accordion-group>
-
-</div>
+</uib-accordion>
 
 <hr>

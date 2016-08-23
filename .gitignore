@@ -7,3 +7,4 @@ coverage/
 .tmp/
 dist/
 transmart-base-ui.iml
+src/app/config.js

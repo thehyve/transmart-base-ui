@@ -1,41 +1,60 @@
-<div id="sidebardiv" ng-controller="SidebarCtrl" class="left-bar">
+<div id="sidebardiv" class="left-bar">
 
+  <span class="search-header">
     <label>Search studies</label>
-    <input  type="text"
-            class="form-control"
-            placeholder="Search term"
-            ng-model="searchTerm"
-            ng-disabled="publicStudies.length == 0 && privateStudies.length == 0">
+    <toggle-switch
+        ng-model="vm.searchMode"
+        on-label="AND"
+        off-label="OR"
+        ng-show="vm.searchKeys.length > 1">
+    </toggle-switch>
+  </span>
 
+    <input type="text"
+           class="form-control"
+           placeholder="Search term"
+           bu-enter-key="vm.addSearchKey();"
+           ng-model="vm.searchTerm"
+           ng-disabled="vm.publicStudies.length == 0 && vm.privateStudies.length == 0">
 
-  <!-- START STUDIES -->
-  <uib-accordion close-others="status.oneAtATime">
+    <ul class="list-inline ts-selected-keywords">
+        <li ng-repeat="searchKey in vm.searchKeys track by $index" class="label label-primary">
+            {{searchKey}}
+            <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="vm.removeSearchKey(searchKey);"></span>
+        </li>
+        <li class="label label-danger" ng-if="vm.searchKeys.length > 0">
+            Clear
+            <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="vm.removeAllSearchKeys();"></span>
+        </li>
+    </ul>
 
-    <uib-accordion-group  heading="Highlights"
-                      is-open="true"
-                      ng-if="false">
-      <span ng-if="publicStudies.length == 0 && privateStudies.length == 0">
+    <!-- START STUDIES -->
+    <uib-accordion close-others="true">
+
+        <uib-accordion-group heading="Highlights"
+                             is-open="true"
+                             ng-if="false">
+      <span ng-if="vm.publicStudies.length == 0 && vm.privateStudies.length == 0">
         No studies loaded.
       </span>
-      <span ng-if="publicStudies.length > 0 || privateStudies.length > 0">
+      <span ng-if="vm.publicStudies.length > 0 || vm.privateStudies.length > 0">
         Browse studies by clicking the study headers below.
       </span>
-    </uib-accordion-group>
+        </uib-accordion-group>
 
-    <study-accordion  studies="publicStudies"
-                      title="'Public studies'"
-                      study-action="displayStudySummaryStatistics"
-                      ng-if="publicStudies.length > 0"
-                      study-shown='searchTerm'>
-    </study-accordion>
-    <study-accordion  studies="privateStudies"
-                      title="'Private studies'"
-                      study-action="displayStudySummaryStatistics"
-                      ng-if="privateStudies.length > 0"
-                      study-shown='searchTerm'>
-    </study-accordion>
+        <study-accordion studies="vm.publicStudies"
+                         title="'Public studies'"
+                         ng-if="vm.publicStudies.length > 0"
+                         study-shown='vm.searchTerm'>
+        </study-accordion>
 
-  </uib-accordion>
+        <study-accordion studies="vm.privateStudies"
+                         title="'Private studies'"
+                         ng-if="vm.privateStudies.length > 0"
+                         study-shown='vm.searchTerm'>
+        </study-accordion>
+
+    </uib-accordion>
 
 </div>
 <!--end tree-->

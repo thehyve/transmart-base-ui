@@ -1,65 +1,51 @@
 <!doctype html>
 <html class="no-js" ng-app="transmartBaseUi">
-  <head>
-    <meta charset="utf-8">
-    <title>transmartBaseUi</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <head>
+        <meta charset="utf-8">
+        <title>tranSMART data warehouse and analytics</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-    <!-- build:css({.tmp/serve,src}) styles/vendor.css -->
-    <!-- bower:css -->
-    <!-- run `gulp wiredep` to automaticaly populate bower styles dependencies -->
-    <!-- endbower -->
-    <!-- endbuild -->
+        <!-- build:css({.tmp/serve,src}) styles/vendor.css -->
+        <!-- bower:css -->
+        <!-- run `gulp wiredep` to automaticaly populate bower styles dependencies -->
+        <!-- endbower -->
+        <!-- endbuild -->
 
-    <!-- build:css({.tmp/serve,src}) styles/app.css -->
-    <!-- inject:css -->
-    <!-- css files will be automaticaly insert here -->
-    <!-- endinject -->
-    <!-- endbuild -->
-  </head>
-  <body>
-    <!--[if lt IE 10]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
+        <!-- build:css({.tmp/serve,src}) styles/app.css -->
+        <!-- inject:css -->
+        <!-- css files will be automaticaly insert here -->
+        <!-- endinject -->
+        <!-- endbuild -->
+    </head>
+    <body>
 
-    <!-- Navigator -->
-    <div ng-include="'app/components/navbar/navbar.html'"></div>
+        <!-- Injection point for abstract root state -->
+        <!-- Navbar -->
+        <div ui-view="navbar"></div>
 
-    <div ui-layout="{flow : 'column'}">
-
-      <div ui-layout-container size="15%" min-size="15%">
-        <!--Side Bar-->
-        <div ng-include="'app/components/sidebar/sidebar.html'"></div>
-      </div>
-
-      <div ui-layout-container min-size="50%">
         <div ui-view></div>
-      </div>
-    </div>
 
-    <!--<div ui-view></div>-->
+        <div ui-view="footer"></div>
 
-    <!-- Footer -->
-    <div ng-include="'app/components/footer/footer.html'"></div>
+        <!-- build:js(src) scripts/vendor.js -->
+        <!-- bower:js -->
+        <!-- run `gulp wiredep` to automaticaly populate bower script dependencies -->
+        <!-- endbower -->
+        <!-- endbuild -->
 
-    <!-- build:js(src) scripts/vendor.js -->
-    <!-- bower:js -->
-    <!-- run `gulp wiredep` to automaticaly populate bower script dependencies -->
-    <!-- endbower -->
-    <!-- endbuild -->
+        <script src="app/config.js"></script>
 
+        <!-- build:js({.tmp/serve,.tmp/partials,src}) scripts/app.js -->
+        <!-- inject:js -->
+        <!-- js files will be automaticaly insert here -->
+        <!-- endinject -->
 
-    <!-- build:js({.tmp/serve,.tmp/partials,src}) scripts/app.js -->
-    <!-- inject:js -->
-    <!-- js files will be automaticaly insert here -->
-    <!-- endinject -->
+        <!-- inject:partials -->
+        <!-- angular templates will be automatically converted in js and inserted here -->
+        <!-- endinject -->
+        <!-- endbuild -->
 
-    <!-- inject:partials -->
-    <!-- angular templates will be automatically converted in js and inserted here -->
-    <!-- endinject -->
-    <!-- endbuild -->
-
-  </body>
+    </body>
 </html>

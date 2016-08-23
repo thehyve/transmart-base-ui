@@ -9,7 +9,9 @@ before_install:
 install:
     - npm install
     - npm install bower
+    - npm install codecov
     - node_modules/.bin/bower install --config.interactive=false
 
 script:
-    - node_modules/.bin/gulp test
+    - node_modules/.bin/gulp --env test test
+    - codecov

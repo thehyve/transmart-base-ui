@@ -1,0 +1,83 @@
+<div class="main-container">
+
+    <uib-alert class="alert-div" ng-repeat="alert in vm.alerts" type="{{alert.type}}" close="vm.close(alert.id)">
+        {{alert.message}}
+    </uib-alert>
+
+    <h2>Settings</h2>
+    <div class="col-md-4">
+
+        <h3>Connect to endpoint</h3>
+        <hr/>
+
+
+        <form name="vm.formData.endpointForm" role="form">
+            <select class="form-control" ng-change="vm.populateDefaultApi();"
+                    ng-model="vm.selectedConnection"
+                    ng-options="connection.title for connection in vm.connections">
+                <option value=""> -- Please select study endpoint --</option>
+            </select>
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" value="" ng-model="vm.isConnectToOtherEndpoint">
+                    Connect to other endpoint
+                </label>
+            </div>
+
+            <div class="panel panel-info" ng-show="vm.isConnectToOtherEndpoint">
+                <div class="panel-heading">New Endpoint</div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <input type="text"
+                               class="form-control"
+                               placeholder="Enter connection's title"
+                               ng-model="vm.formData.title">
+                    </div>
+                    <div class="form-group">
+                        <input type="text"
+                               class="form-control"
+                               placeholder="Enter URI"
+                               ng-model="vm.formData.url">
+                    </div>
+                </div>
+            </div>
+
+            <button type="button"
+                    class="btn btn-primary"
+                    ng-disabled="!vm.selectedConnection.isOAuth"
+                    ng-click="vm.navigateToAuthorizationPage()">
+                Connect
+            </button>
+        </form>
+    </div>
+
+    <div class="col-md-8">
+        <h3>Active connections</h3>
+
+        <table class="table">
+            <tr>
+                <th>Status</th>
+                <th>Name</th>
+                <th>Url</th>
+                <th>Expiration</th>
+                <th></th>
+            </tr>
+
+            <tr ng-repeat="endpoint in vm.endpoints">
+                <td><i class="glyphicon"
+                       ng-class="vm.getStatusIcon(endpoint)"></i></td>
+                <td>{{endpoint.title}}</td>
+                <td>{{endpoint.url}}</td>
+                <td>{{endpoint.expiresAt | date:'dd-M H:mm'}}</td>
+                <td><i class="glyphicon glyphicon-remove-circle text-danger"
+                       ng-click="vm.removeEndpoint(endpoint)" ng-show="true"></i></td>
+            </tr>
+        </table>
+        <button class="btn btn-default" ng-click="vm.clearSavedEndpoints()">
+            Clear All
+        </button>
+
+    </div>
+
+</div>

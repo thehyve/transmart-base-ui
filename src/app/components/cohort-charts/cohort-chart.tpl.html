@@ -1,0 +1,43 @@
+<div class="panel panel-default chart-container"
+     id="cohort-chart-panel-{{tsLabel.labelId}}">
+
+    <div class="panel-heading chart-drag-handle">
+        <section class="ts-study-title-container">
+            <span class="ts-study-title">{{title}}</span>
+        </section>
+
+        <i class="glyphicon glyphicon-remove pull-right ts-icon ts-remove-chart"
+           ng-click="removeChart(tsLabel)">
+        </i>
+        <i class="glyphicon glyphicon-refresh pull-right ts-icon ts-remove-chart"
+           ng-click="clearFilter(tsLabel)"
+           uib-tooltip="Clear filter"
+           tooltip-trigger="mouseenter"
+           popupDelay="1000"></i>
+        <i class="glyphicon glyphicon-link pull-right ts-icon"
+           ng-click="groupAction()"
+           ng-class="{'text-success': groupOn}"
+           ng-if="showGroupIcon"
+           uib-tooltip="Click two concepts to produce a combination chart."
+           tooltip-trigger="mouseenter"
+           popupDelay="1000"></i>
+    </div>
+
+    <!-- Body ---------------------------------------------------------------->
+    <div class="panel-body inner-chart">
+
+        <!-- Number chart only ------------------------------------------------->
+        <div ng-if="isNumberChart">
+        <span class="number-display-title">
+          HIGH DIMENSIONAL CONCEPT
+        </span>
+            <br>
+        <span>
+          Subjects selected:
+        </span>
+        </div>
+        <!---------------------------------------------------------------------->
+
+    </div>
+    <!------------------------------------------------------------------------>
+</div>

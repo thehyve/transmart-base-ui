@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/thehyve/transmart-base-ui.svg)](https://travis-ci.org/thehyve/transmart-base-ui)
+[![codecov.io](https://codecov.io/gh/thehyve/transmart-base-ui/branch/dev/graphs/badge.svg)](https://codecov.io/gh/thehyve/transmart-base-ui/branch/dev)
+
 # transmart-base-ui
 Boilerplate code for tranSMART UI
 
@@ -35,6 +38,15 @@ $ gulp serve
 * `gulp protractor:dist` to launch your e2e tests with Protractor on the dist files
 
 More information on the gulp tasks in [this README.md](app/templates/gulp/README.md).
+
+### Configuration for development, testing and production
+
+There are different configurations available for development, testing and production:
+'dev', 'test' and 'prod'. Specify your environment by passing a parameter to gulp
+('dev' is the default):
+* 'gulp --env dev serve'
+* 'gulp --env test test'
+* 'gulp --env prod build'
 
 ## Directory structure
 

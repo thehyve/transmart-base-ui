@@ -15,6 +15,18 @@ Contains the build tasks aiming to optimize all your project and create the dist
 - **clean**: delete temporary files
 - **build**: html + images + fonts + misc
 
+## docs.js
+
+Contains the task for generating documentation. 
+
+usage:
+
+```groovy
+gulp docs
+```
+Examples of comments can be found in [angular-jsdoc github page](https://github.com/allenhwkim/angular-jsdoc/blob/master/README.md#example) and [this blog post](http://hashbang.nl/angular/2015/02/10/simple-and-clear-angular-application-documentation-using-angular-jsdoc).
+
+
 ## e2e-tests.js
 
 Task for launching e2e tests from Gulp. Which means launching local server,

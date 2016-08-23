@@ -1,0 +1,79 @@
+<div class="main-container">
+    <uib-alert class="alert-div" ng-repeat="alert in vm.alerts" type="{{alert.type}}" close="vm.close(alert.id)">
+        {{alert.message}}
+    </uib-alert>
+
+    <uib-tabset>
+        <uib-tab active="vm.tabs[0].active" ng-click="vm.activateTab(tabs[0].title, 'cohortSelection');">
+            <uib-tab-heading>
+                <span>{{vm.tabs[0].title}}</span>
+            </uib-tab-heading>
+
+            <div class="well" ng-if="vm.cohortChartContainerLabels.length > 0" >
+                <button type="button" class="btn btn-primary btn-sm ts-btn-node"
+                        ng-repeat="label in vm.cohortChartContainerLabels"
+                        ng-click="vm.removeLabel(label)">
+                    <div class="ts-node-name">
+                        {{label.name}}<br><span
+                        class="ts-smaller-font">{{label.study._embedded.ontologyTerm.name}}</span>
+                    </div>
+
+                    <div class="ts-node-close-x" aria-hidden="true">&times;</div>
+                </button>
+                <button ng-if="vm.cohortChartContainerLabels.length >= 1" class="btn btn-danger ts-btn-node-reset"
+                        ng-click="vm.resetActiveLabels()">
+                    Reset<br>({{vm.cs.labels.length}}/{{vm.cs.maxNoOfDimensions}})
+                </button>
+                <button ng-if="vm.cohortChartContainerLabels.length >= 1" class="btn" ng-click="vm.openSaveCohortModal()">
+                    Save cohort
+                </button>
+            </div>
+
+            <div class="progress-container">
+                <uib-progressbar max="100" value="vm.cs.selected/(vm.cs.total/100)"
+                                 ng-class="{'progress-striped': vm.cohortUpdating}" class="progress active"
+                                 animate="true">
+                    <div class="data-count">{{vm.cs.selected}}/{{vm.cs.total}}</div>
+                </uib-progressbar>
+            </div>
+
+            <div id="main-chart-container" data-drop="true" ng-model='vm.droppedNode'
+                 jqyoui-droppable="{
+                    multiple:true,
+                    onDrop:'vm.onNodeDropEvent(vm.droppedNode)',
+                    onOver:'vm.onNodeOver',
+                    onOut:'vm.onNodeOut' }"
+                 class="text-center main-chart-container">
+
+                <div gridster="vm.gridsterOpts" id="ts-gridster-box">
+                    <span ng-if="vm.cohortChartContainerLabels.length == 0" class="ts-well-placeholder-text">
+                        Drag and drop nodes here
+                    </span>
+                    <ul>
+                        <li gridster-item="label" ng-repeat="label in vm.cohortChartContainerLabels">
+                            <ts-cohort-chart class="chart-container"
+                                             ts-gridster-item="gridsterItem"
+                                             ts-gridster="gridster"
+                                             ts-label="label">
+                            </ts-cohort-chart>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </uib-tab>
+
+        <uib-tab active="vm.tabs[1].active" ng-click="vm.activateTab(vm.tabs[1].title, 'cohortGrid');">
+            <uib-tab-heading>
+                <span>{{vm.tabs[1].title}}</span>
+            </uib-tab-heading>
+            <!--Cohort grid-->
+            <cohort-grid cohort="vm.selectedSubjects" headers="vm.cs.labels" ng-show="vm.cs.labels.length > 0"></cohort-grid>
+            <!--Cohort grid no data message-->
+            <div class="form-group has-warning" ng-show="vm.cs.labels.length <= 0">
+                <span class="help-block">No cohort selected.</span>
+            </div>
+        </uib-tab>
+
+    </uib-tabset>
+</div>
+
