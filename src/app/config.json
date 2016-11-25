@@ -1,9 +1,10 @@
 {
     "dev": {
         "IS_TESTING": false,
-        "MASTER_ENDPOINT_CONFIG": {
-            "title": "translocation-test",
-            "url": "http://transmart-test-translocation.thehyve.net/transmart",
+        "MASTER_ENDPOINT_CONFIG":
+        {
+            "title": "localhost",
+            "url": "http://localhost:8080/transmart",
             "apiVersion": "v1",
             "isOAuth": true,
             "isMaster": true

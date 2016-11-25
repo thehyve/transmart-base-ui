@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Unit testing cohort-chart directive', function () {
-    var ctrl, $controller, $compile, rootScope, scope, chartElm, toastr,
+    var ctrl, $controller, $compile, rootScope, scope, chartElm, AlertService,
         CohortChartMocks, CohortSelectionMocks, CohortSelectionService, DcChartsService;
 
     // Load the transmartBaseUi module, which contains the directive
@@ -13,7 +13,7 @@ describe('Unit testing cohort-chart directive', function () {
 
     // Store references to $rootScope and $compile
     // so they are available to all tests in this describe block
-    beforeEach(inject(function (_$controller_, _$compile_, _$rootScope_, _CohortChartMocks_, _toastr_,
+    beforeEach(inject(function (_$controller_, _$compile_, _$rootScope_, _CohortChartMocks_, _AlertService_,
                                 _CohortSelectionMocks_, _CohortSelectionService_, _DcChartsService_) {
         // The injector unwraps the underscores (_) from around the parameter
         // names when matching
@@ -25,7 +25,7 @@ describe('Unit testing cohort-chart directive', function () {
         CohortChartMocks = _CohortChartMocks_;
         CohortSelectionService = _CohortSelectionService_;
         DcChartsService = _DcChartsService_;
-        toastr = _toastr_;
+        AlertService = _AlertService_;
 
         scope.gridsterOpts = CohortSelectionMocks.getGridsterOptions();
         scope.gridsterItem = CohortSelectionMocks.getGridsterItem();
@@ -34,7 +34,7 @@ describe('Unit testing cohort-chart directive', function () {
         scope.label = scope.labels[0];
         scope.filterOpt = {
             showFilterInput: false
-        }
+        };
         var boxId = CohortChartMocks.getBoxId();
         scope.tsLabel = {
             boxId: boxId
@@ -144,18 +144,18 @@ describe('Unit testing cohort-chart directive', function () {
         it('should report error when isNaN', function () {
             var _scope = chartElm.isolateScope();
             _scope.filterOpt.min = NaN;
-            spyOn(toastr, 'error');
+            spyOn(AlertService, 'add');
             _scope.filterBarChart();
-            expect(toastr.error).toHaveBeenCalled();
+            expect(AlertService.add).toHaveBeenCalled();
         });
 
         it('should report error when max <= min', function () {
             var _scope = chartElm.isolateScope();
             _scope.filterOpt.min = 100;
             _scope.filterOpt.max = 100;
-            spyOn(toastr, 'error');
+            spyOn(AlertService, 'add');
             _scope.filterBarChart();
-            expect(toastr.error).toHaveBeenCalled();
+            expect(AlertService.add).toHaveBeenCalled();
         });
 
         it('should handle the min == null case', function () {

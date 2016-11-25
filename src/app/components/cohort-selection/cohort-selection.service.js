@@ -68,36 +68,10 @@ angular.module('transmartBaseUi')
         service.removeBox = function (boxId) {
             if (service.boxes.length > 1) {
                 var removed = _.remove(service.boxes, {boxId: boxId});
-                if (removed.length > 0) {
-                    var boxsetContainer = angular.element('#cohort-selection-ui-layout-div');
-                    var boxsetContainerWidth = boxsetContainer.width();
-                    if (service.boxes.length > 2) {
-                        boxsetContainerWidth -= service.DEFAULT_BOX_SIZE;
-                        boxsetContainer.width(boxsetContainerWidth);
-                    }
-
-                    var sumWidth = 0;
-                    service.boxes.forEach(function (box) {
-                        var boxContainer = box.ctrl.boxElm.parent();
-                        var width = boxContainer.width();
-                        sumWidth += width;
-                    });
-
-                    service.boxes.forEach(function (box) {
-                        var boxContainer = box.ctrl.boxElm.parent();
-                        var width = boxContainer.width();
-                        var proportion = width / sumWidth;
-                        var newWidth = proportion * boxsetContainerWidth;
-                        boxContainer.width(newWidth);
-                    });
-
-                    return true;
-                }
-                else {
-                    return false;
-                }
+                return removed.length ? true : false;
+            } else {
+                return false;
             }
-            else return false;
         };
 
         /**

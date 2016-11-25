@@ -44,8 +44,8 @@ describe('SaveCohortDialogCtrl', function () {
         EndpointService = _EndpointService_;
         httpBackend = _$httpBackend_;
 
-        AlertService = { showToastrAlert: function() {}};
-        spyOn(AlertService, 'showToastrAlert');
+        AlertService = { add: function() {}};
+        spyOn(AlertService, 'add');
 
         spyOn(Restangular, 'addResponseInterceptor');
         var _endpoint = {restangular : Restangular};
@@ -77,7 +77,7 @@ describe('SaveCohortDialogCtrl', function () {
         httpBackend.flush();
 
         expect(QueryBuilderService.convertCohortFiltersToXML).toHaveBeenCalled();
-        expect(AlertService.showToastrAlert).toHaveBeenCalled();
+        expect(AlertService.add).toHaveBeenCalled();
         expect(CohortSharingService.setSelection).toHaveBeenCalledWith(['1010']);
         expect(uibModalInstance.close).toHaveBeenCalled();
     });
@@ -91,7 +91,7 @@ describe('SaveCohortDialogCtrl', function () {
         httpBackend.flush();
 
         expect(QueryBuilderService.convertCohortFiltersToXML).toHaveBeenCalled();
-        expect(AlertService.showToastrAlert).toHaveBeenCalled();
+        expect(AlertService.add).toHaveBeenCalled();
         expect(uibModalInstance.close).toHaveBeenCalled();
     });
 
