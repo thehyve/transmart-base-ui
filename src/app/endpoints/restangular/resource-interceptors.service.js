@@ -32,7 +32,7 @@ angular.module('tmEndpoints')
                 if (what === 'concepts') {
                     _what = 'ontology_terms';
                 } else if (what === 'patient_sets') {
-                    _what = 'values';
+                    _what = 'subjects';
                 } else {
                     _what = _getLastToken(what);
                 }
