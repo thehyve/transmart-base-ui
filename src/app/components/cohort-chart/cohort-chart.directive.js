@@ -7,8 +7,8 @@
  * @description handles cohort chart creation and user-interaction
  */
 angular.module('transmartBaseUi')
-    .directive('tsCohortChart', ['DcChartsService', 'CohortSelectionService', 'toastr',
-        function (DcChartsService, CohortSelectionService, toastr) {
+    .directive('tsCohortChart', ['DcChartsService', 'CohortSelectionService', 'AlertService',
+        function (DcChartsService, CohortSelectionService, AlertService) {
 
             var _scope = {
                 tsGridster: '=',
@@ -58,9 +58,9 @@ angular.module('transmartBaseUi')
                     // check if chart is number chart or not
                     scope.isNumberChart = _chart.type === 'NUMBER';
                     // check if chart is bar chart or not
-                    scope.isBarChart = _chart.type === 'BARCHART',
-                        // show group icon
-                        scope.showGroupIcon = scope.tsLabel.type !== 'combination' && scope.tsLabel.type !== 'highdim';
+                    scope.isBarChart = _chart.type === 'BARCHART';
+                    // show group icon
+                    scope.showGroupIcon = scope.tsLabel.type !== 'combination' && scope.tsLabel.type !== 'highdim';
 
                     scope.filterOpt = {
                         // the flag indicating whether to show the manual filter input option
@@ -141,7 +141,8 @@ angular.module('transmartBaseUi')
                         }
 
                         if (_.isNaN(min) || _.isNaN(max) || (min === null && max === null)) {
-                            toastr.error('Please specify numeric values for the filter input.');
+                            //toastr.error('Please specify numeric values for the filter input.');
+                            AlertService.add('danger', 'Please specify numeric values for the filter input.');
                         }
                         else {
                             var mmin = +scope.chart.xAxisMin();
@@ -165,10 +166,12 @@ angular.module('transmartBaseUi')
                                 scope.chart.redraw();
                             }
                             else if (adjusted) {
-                                toastr.error('Selection out of bound.');
+                                //toastr.error('Selection out of bound.');
+                                AlertService.add('danger', 'Selection out of bound.');
                             }
                             else if (max <= min) {
-                                toastr.error('Max should be larger than min.');
+                                //toastr.error('Max should be larger than min.');
+                                AlertService.add('danger', 'Max should be larger than min.');
                             }
 
                         }
