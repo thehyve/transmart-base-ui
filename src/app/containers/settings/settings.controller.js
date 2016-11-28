@@ -1,7 +1,10 @@
 'use strict';
 
+/**
+ * State configuration definition for 'settings'
+ */
 angular.module('transmartBaseUi')
-    .controller('ConnectionsCtrl', ['$location', 'EndpointService', 'StudyListService', 'AlertService', 'CONNECTIONS',
+    .controller('SettingsCtrl', ['$location', 'EndpointService', 'StudyListService', 'AlertService', 'CONNECTIONS',
         function ($location, EndpointService, StudyListService, AlertService, CONNECTIONS) {
 
             var vm = this;

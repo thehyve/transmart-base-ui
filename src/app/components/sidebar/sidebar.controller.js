@@ -20,7 +20,9 @@ angular.module('transmartBaseUi')
             vm.searchKeys = [];
 
             $scope.$watch(
-                function() { return vm.searchMode; },
+                function () {
+                    return vm.searchMode;
+                },
                 function (newVal) {
                     if (!vm.searchTerm && !vm.searchKeys.length) {
                         vm.removeAllSearchKeys();

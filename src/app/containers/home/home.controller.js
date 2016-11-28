@@ -1,8 +1,10 @@
 'use strict';
 
 angular.module('transmartBaseUi')
-    .controller('HomeCtrl', ['$state', function ($state) {
+    .controller('HomeCtrl', ['EndpointService', function (EndpointService) {
         var vm = this;
 
-        $state.go('workspace');
+        vm.login = function () {
+            EndpointService.login();
+        };
     }]);

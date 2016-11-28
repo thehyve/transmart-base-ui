@@ -56,8 +56,7 @@ describe('Endpoint Service Unit Tests', function () {
             expect(_res.expires_in).toEqual('33295');
             expect(_res.scope).toEqual('write read');
             expect(_res.restangular).toEqual(_fakeRestangular);
-        })
-
+        });
     });
 
     describe('retrieveStoredEndpoints', function () {
@@ -65,12 +64,12 @@ describe('Endpoint Service Unit Tests', function () {
         beforeEach(function () {
             _fakeRestangular = {foo: 'Bar'};
             spyOn($cookies, 'getObject').and.returnValue(
-                [{title: "local", url: "http://localhost:8080/transmart", isOAuth: true, isMaster: true}]
+                [{title: "local", url: "http://localhost:8001/transmart", isOAuth: true, isMaster: true}]
             );
             spyOn(ResourceService, 'createResourceServiceByEndpoint').and.returnValue(_fakeRestangular);
         });
 
-        it ('should retrieved stored endpoints from $cookie', function () {
+        it ('should retrieve stored endpoints from $cookie', function () {
             var _x = endpointService.retrieveStoredEndpoints('fooCookieKey');
             _x.forEach(function (endpoint) {
                 expect(endpoint.restangular).toEqual(_fakeRestangular);

@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * State configuration definition for 'settings'
+ * State configuration definition for 'help'
  */
 angular.module('transmartBaseUi')
     .config(function ($stateProvider) {
@@ -14,17 +14,8 @@ angular.module('transmartBaseUi')
                         templateUrl: 'app/containers/settings/settings.html'
                     },
                     'content@settings': {
-                        templateUrl: 'app/containers/settings/settings.html'
-                    }
-                }
-            })
-            .state('settings.connections', {
-                parent: 'settings',
-                url: '/connections',
-                views: {
-                    'content@settings': {
-                        templateUrl: 'app/containers/settings/connections/connections.html',
-                        controller: 'ConnectionsCtrl',
+                        templateUrl: 'app/containers/settings/settings.content.html',
+                        controller: 'SettingsCtrl',
                         controllerAs: 'vm'
                     }
                 }

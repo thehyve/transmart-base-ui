@@ -9,8 +9,6 @@ angular.module('transmartBaseUi')
             .state('workspace', {
                 parent: 'site',
                 url: '/workspace',
-                // abstract: true, // make this abstract
-                // reloadOnSearch: false,
                 views: {
                     '@': {
                         templateUrl: 'app/containers/workspace/workspace.html'

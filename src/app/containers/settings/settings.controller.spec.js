@@ -1,6 +1,7 @@
 'use strict';
 
-describe('ConnectionsCtrl', function () {
+describe('SettingsCtrl', function () {
+
     beforeEach(module('transmartBaseUi'));
 
     var ctrl, scope, rootScope, _dummyEndpoints, EndpointService, EndpointServiceMocks, AlertService, AlertServiceMocks, location;
@@ -27,7 +28,7 @@ describe('ConnectionsCtrl', function () {
         spyOn(AlertService, 'remove');
         spyOn(AlertService, 'get');
 
-        ctrl = _$controller_('ConnectionsCtrl', {
+        ctrl = _$controller_('SettingsCtrl', {
             $scope: scope,
             $location: location,
             EndpointService: EndpointService,
@@ -96,6 +97,24 @@ describe('ConnectionsCtrl', function () {
             var _e = {};
             ctrl.removeEndpoint(_e);
             expect(EndpointService.removeEndpoint).toHaveBeenCalled();
+        });
+    });
+
+    describe('getStatusIcon', function () {
+        var endpoint = {};
+        it('should switch icon if endpoint status is active', function () {
+            endpoint.status = 'active';
+            ctrl.getStatusIcon(endpoint);
+        });
+
+        it('should switch icon if endpoint status is error', function () {
+            endpoint.status = 'error';
+            ctrl.getStatusIcon(endpoint);
+        });
+
+        it('should switch icon if endpoint status is local', function () {
+            endpoint.status = 'local';
+            ctrl.getStatusIcon(endpoint);
         });
     });
 
