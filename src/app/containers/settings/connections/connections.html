@@ -15,9 +15,10 @@
             <select class="form-control" ng-change="vm.populateDefaultApi();"
                     ng-model="vm.selectedConnection"
                     ng-options="connection.title for connection in vm.connections">
-                <option value=""> -- Please select study endpoint --</option>
+                <option value="">-- Please select study endpoint --</option>
             </select>
 
+            <!-- TO BE REVISITED
             <div class="checkbox">
                 <label>
                     <input type="checkbox" value="" ng-model="vm.isConnectToOtherEndpoint">
@@ -42,6 +43,7 @@
                     </div>
                 </div>
             </div>
+            -->
 
             <button type="button"
                     class="btn btn-primary"
