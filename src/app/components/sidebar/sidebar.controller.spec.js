@@ -165,7 +165,9 @@ describe('SidebarCtrl', function () {
 
         it('should continue the watch function when there is a search term', function () {
             ctrl.searchTerm = 'some term';
+            spyOn(StudyListService, 'showStudiesByKeys')
             scope.$digest();
+            expect(StudyListService.showStudiesByKeys).toHaveBeenCalled();
         });
     });
 

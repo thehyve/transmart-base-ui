@@ -104,17 +104,20 @@ describe('SettingsCtrl', function () {
         var endpoint = {};
         it('should switch icon if endpoint status is active', function () {
             endpoint.status = 'active';
-            ctrl.getStatusIcon(endpoint);
+            var icon = ctrl.getStatusIcon(endpoint);
+            expect(icon).toBe('glyphicon-ok text-success');
         });
 
         it('should switch icon if endpoint status is error', function () {
             endpoint.status = 'error';
-            ctrl.getStatusIcon(endpoint);
+            var icon = ctrl.getStatusIcon(endpoint);
+            expect(icon).toBe('glyphicon-warning-sign text-warning');
         });
 
         it('should switch icon if endpoint status is local', function () {
             endpoint.status = 'local';
-            ctrl.getStatusIcon(endpoint);
+            var icon = ctrl.getStatusIcon(endpoint);
+            expect(icon).toBe('glyphicon glyphicon-hdd text-success');
         });
     });
 
