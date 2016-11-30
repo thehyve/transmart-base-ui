@@ -8,15 +8,12 @@ angular.module('transmartBaseUi')
         $stateProvider
             .state('home', {
                 parent: 'site',
-                url: '/',
+                url: '/home',
                 views: {
                     '@': {
-                        templateUrl: 'app/containers/home/home.html'
-                    },
-                    'content@home': {
-                        templateUrl: 'app/containers/home/home.content.html',
+                        templateUrl: 'app/containers/home/home.html',
                         controller: 'HomeCtrl',
-                        controllerAs: 'vm'
+                        controllerAs: 'homeCtrl'
                     }
                 }
             });

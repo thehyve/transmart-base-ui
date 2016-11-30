@@ -8,10 +8,10 @@
  */
 angular.module('tmEndpoints')
     .factory('EndpointService',
-        ['$rootScope', '$http', '$q', 'ResourceService', '$cookies', '$window', '$location', 'MASTER_ENDPOINT_CONFIG',
-            'IS_TESTING',
-            function ($rootScope, $http, $q, ResourceService, $cookies, $window, $location, MASTER_ENDPOINT_CONFIG,
-                      IS_TESTING) {
+        ['$rootScope', '$http', '$q', 'ResourceService', '$cookies', '$window', '$location',
+            'MASTER_ENDPOINT_CONFIG', 'IS_TESTING',
+            function ($rootScope, $http, $q, ResourceService, $cookies, $window, $location,
+                      MASTER_ENDPOINT_CONFIG, IS_TESTING) {
 
                 var service = {};
 
@@ -24,6 +24,10 @@ angular.module('tmEndpoints')
                 var cookieKeyForEndpoints = 'transmart-base-ui-v2.endpoints';
                 var cookieKeyForSelectedEndpoint = 'transmart-base-ui-v2.selectedEndpoint';
 
+
+                //a flag indicating if the user is logged in or not
+                service.loggedIn = false;
+
                 /**
                  * Initializes the endpoints by loading them from the cookies, checking
                  * if we're currently being redirected from an authorization page,
@@ -32,13 +36,13 @@ angular.module('tmEndpoints')
                  * @memberof EndpointService
                  */
                 service.initializeEndpoints = function () {
+                    service.loggedIn = true;
                     service.retrieveStoredEndpoints(cookieKeyForEndpoints); // includes master endpoint
 
                     // Check if there is an OAuth fragment, which indicates we're in the process
                     // of authorizing an endpoint.
                     var oauthGrantFragment = $location.hash();
                     if (oauthGrantFragment.length > 1) {
-
                         // Update the current endpoint with the received credentials and save it
                         var selectedConnection = service.initializeEndpointWithCredentials(
                             service.getSelectedEndpoint(),
@@ -146,6 +150,52 @@ angular.module('tmEndpoints')
                 };
 
                 /**
+                 * log out
+                 * @memberof EndpointService
+                 */
+                service.logout = function () {
+
+                    $cookies.remove(cookieKeyForEndpoints);
+                    $cookies.remove(cookieKeyForSelectedEndpoint);
+                    $cookies.remove('JSESSIONID');
+
+                    endpoints = [];
+                    masterEndpoint = null;
+                    service.loggedIn = false;
+                };
+
+                /**
+                 * log in
+                 * @memberof EndpointService
+                 */
+                service.login = function () {
+                    service.initializeEndpoints();
+                };
+
+                /**
+                 * Navigate to the endpoint's authorization page.
+                 * @memberof EndpointService
+                 * @param endpoint
+                 */
+                service.navigateToAuthorizationPage = function (endpoint) {
+                    var currentHost = String($location.host()),
+                        currentPort = String($location.port()),
+                        currentProtocol = $location.protocol();
+
+                    // Cut off any '/'
+                    var url = endpoint.url;
+                    if (url.substring(url.length - 1, url.length) === '/') {
+                        url = url.substring(0, url.length - 1);
+                    }
+
+                    var authorizationUrl = url +
+                        '/oauth/authorize?response_type=token&client_id=glowingbear-js&redirect_uri=' +
+                        this.getRedirectURI(currentProtocol, currentHost, currentPort);
+
+                    $window.open(authorizationUrl, '_self');
+                };
+
+                /**
                  * Save selected endpoint to cookie, so we know which endpoint we were
                  * connecting to when the page is reloaded.
                  * @memberof EndpointService
@@ -219,28 +269,6 @@ angular.module('tmEndpoints')
                     return protocol + '%3A%2F%2F' + host + port + '%2Fconnections';
                 };
 
-                /**
-                 * Navigate to the endpoint's authorization page.
-                 * @memberof EndpointService
-                 * @param endpoint
-                 */
-                service.navigateToAuthorizationPage = function (endpoint) {
-                    var currentHost = String($location.host()),
-                        currentPort = String($location.port()),
-                        currentProtocol = $location.protocol();
-
-                    // Cut off any '/'
-                    var url = endpoint.url;
-                    if (url.substring(url.length - 1, url.length) === '/') {
-                        url = url.substring(0, url.length - 1);
-                    }
-
-                    var authorizationUrl = url +
-                        '/oauth/authorize?response_type=token&client_id=glowingbear-js&redirect_uri=' +
-                        this.getRedirectURI(currentProtocol, currentHost, currentPort);
-
-                    $window.open(authorizationUrl, '_self');
-                };
 
                 /**
                  * Sets up a new restangular instance using the specified credentials.

@@ -4,7 +4,7 @@
         "MASTER_ENDPOINT_CONFIG":
         {
             "title": "localhost",
-            "url": "http://localhost:8080/transmart",
+            "url": "http://transmart-test-translocation.thehyve.net/transmart",
             "apiVersion": "v1",
             "isOAuth": true,
             "isMaster": true

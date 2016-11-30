@@ -152,5 +152,24 @@ describe('SidebarCtrl', function () {
 
     });
 
+    describe('test watch function', function () {
+        beforeEach(function () {
+            spyOn(ctrl, 'removeAllSearchKeys');
+        });
+
+        it('should invoke watch when digested', function () {
+            ctrl.searchMode = true;
+            scope.$digest();
+            expect(ctrl.removeAllSearchKeys).toHaveBeenCalled();
+        });
+
+        it('should continue the watch function when there is a search term', function () {
+            ctrl.searchTerm = 'some term';
+            spyOn(StudyListService, 'showStudiesByKeys')
+            scope.$digest();
+            expect(StudyListService.showStudiesByKeys).toHaveBeenCalled();
+        });
+    });
+
 
 });
