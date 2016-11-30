@@ -6,8 +6,8 @@
  * @name NavbarCtrl
  */
 angular.module('transmartBaseUi')
-    .controller('NavbarCtrl', ['$scope', '$state', 'EndpointService',
-        function ($scope, $state, EndpointService) {
+    .controller('NavbarCtrl', ['$scope', '$state', 'EndpointService', '$interval',
+        function ($scope, $state, EndpointService, $interval) {
             var vm = this;
 
             vm.showNavbar = true;
@@ -16,6 +16,12 @@ angular.module('transmartBaseUi')
                 EndpointService.logout();
                 $state.go('home');
             };
+
+            var idleTimeLimit = 30; //in minutes
+            $interval(function () {
+                console.log('time is up');
+                vm.logout();
+            }, idleTimeLimit*60000);
 
             $scope.$watch(function () {
                 return EndpointService.loggedIn;
