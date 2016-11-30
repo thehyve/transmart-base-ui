@@ -132,3 +132,12 @@ If you deploy it to another application server find the configuration
 here:
 
 https://github.com/angular-ui/ui-router/wiki/Frequently-Asked-Questions#how-to-configure-your-server-to-work-with-html5mode
+
+## Configuring TranSMART Endpoint
+
+Endpoints are defined in src/app/config.json
+
+To serve as endpoint for TranSMART Glowing Bear, TranSMART Backend need to support Cross Origin Resource Sharing (CORS) 
+so that its APIs can be consumed by Glowing Bear. Enabling CORS support can be done in several ways such as allowing 
+cross origin resource sharing on application server where TranSMART Backend is deployed or installing Grails CORS plugin 
+in tranSMART Backend (development purpose only). 
