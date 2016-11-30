@@ -1,6 +1,7 @@
 {
     "dev": {
         "IS_TESTING": false,
+        "IDLE_IN_MINUTES": 20,
         "MASTER_ENDPOINT_CONFIG":
         {
             "title": "localhost",
@@ -26,6 +27,7 @@
     },
     "test": {
         "IS_TESTING": true,
+        "IDLE_IN_MINUTES": 20,
         "MASTER_ENDPOINT_CONFIG": {
             "title": "translocation-test",
             "url": "http://transmart-test-translocation.thehyve.net/transmart",
@@ -50,6 +52,7 @@
     },
     "prod": {
         "IS_TESTING": false,
+        "IDLE_IN_MINUTES": 20,
         "MASTER_ENDPOINT_CONFIG": {
             "title": "transmart-gb",
             "url": "http://transmart-gb.thehyve.net/transmart",

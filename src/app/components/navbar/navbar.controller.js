@@ -38,14 +38,4 @@ angular.module('transmartBaseUi')
                 }
             });
 
-        }])
-    .config(function (IdleProvider, KeepaliveProvider) {
-        IdleProvider.idle(20*60); // 20min in seconds
-        IdleProvider.timeout(10); // in seconds
-        KeepaliveProvider.interval(20); // in seconds
-    })
-    .run(function (Idle) {
-        // start watching when the app runs,
-        // also starts the Keepalive service by default.
-        Idle.watch();
-    });
+        }]);

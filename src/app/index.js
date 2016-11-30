@@ -32,10 +32,10 @@ angular.module('transmartBaseUi', [
         'tmEndpoints',
         'ngIdle'
     ])
-    .config(['$stateProvider',  '$urlRouterProvider', 'cfpLoadingBarProvider', '$locationProvider',
-        '$uibTooltipProvider', '$compileProvider',
+    .config(['$stateProvider', '$urlRouterProvider', 'cfpLoadingBarProvider', '$locationProvider',
+        '$uibTooltipProvider', '$compileProvider', 'IdleProvider', 'KeepaliveProvider', 'IDLE_IN_MINUTES',
         function ($stateProvider, $urlRouterProvider, cfpLoadingBarProvider, $locationProvider,
-                  $uibTooltipProvider, $compileProvider) {
+                  $uibTooltipProvider, $compileProvider, IdleProvider, KeepaliveProvider, IDLE_IN_MINUTES) {
 
             $locationProvider.html5Mode({
                 enabled: true,
@@ -76,13 +76,22 @@ angular.module('transmartBaseUi', [
             // enable scope
             $compileProvider.debugInfoEnabled = true;
 
+            //configuration for user idle time management
+            IdleProvider.idle(IDLE_IN_MINUTES * 60); // in seconds
+            IdleProvider.timeout(10); // in seconds
+            KeepaliveProvider.interval(20); // in seconds
+
         }])
 
-    .run(['$rootScope', '$location', '$cookieStore', '$http', 'EndpointService',
-        function ($rootScope, $location, $cookieStore, $http, EndpointService) {
+    .run(['$rootScope', '$location', '$cookieStore', '$http', 'EndpointService', 'Idle',
+        function ($rootScope, $location, $cookieStore, $http, EndpointService, Idle) {
 
             // init globals
             $rootScope.globals = $cookieStore.get('globals') || {};
 
             EndpointService.initializeEndpoints();
+
+            // start watching when the app runs,
+            // also starts the Keepalive service by default.
+            Idle.watch();
         }]);
