@@ -26,7 +26,24 @@ describe('NavbarCtrl', function () {
     it('should change the flag showNavbar when EndpointService.loggedIn is changed', function () {
         EndpointService.loggedIn = false;
         scope.$digest();
-
         expect(ctrl.showNavbar).toBe(false);
     });
+
+    it('should listen to IdleStart event', function () {
+        scope.$broadcast('IdleStart');
+        expect(ctrl.warningDialog).not.toBe(null);
+    });
+
+    it('should listen to IdleTimeout event', function () {
+        ctrl.warningDialog = {
+            close: function () {
+            }
+        };
+        spyOn(ctrl.warningDialog, 'close');
+        spyOn(ctrl, 'logout');
+        scope.$broadcast('IdleTimeout');
+        expect(ctrl.warningDialog.close).toHaveBeenCalled();
+        expect(ctrl.logout).toHaveBeenCalled();
+    });
+
 });
