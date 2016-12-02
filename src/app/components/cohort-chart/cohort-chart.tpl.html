@@ -29,7 +29,18 @@
            tooltip-trigger="mouseenter"
            tooltip-placement="top"
            popupDelay="1000"></i>
-
+        <i class="dropdown pull-right ts-icon"
+           uib-tooltip="Export chart"
+           tooltip-trigger="mouseenter"
+           tooltip-placement="top"
+           popupDelay="1000">
+            <i data-toggle="dropdown"><span class="glyphicon glyphicon-save"></span></i>
+            <ul class="dropdown-menu" style="width: 1px;">
+                <li><a ng-click="exportImage(tsLabel,'png')">PNG</a></li>
+                <li><a ng-click="exportImage(tsLabel,'svg')">SVG</a></li>
+                <li><a ng-click="exportImage(tsLabel,'pdf')">PDF</a></li>
+            </ul>
+        </i>
     </div>
 
     <!-- Body ---------------------------------------------------------------->

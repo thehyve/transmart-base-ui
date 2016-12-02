@@ -244,7 +244,8 @@ angular.module('transmartBaseUi')
                 .yAxisLabel(opt.yLab || '')
                 .xAxisLabel(opt.xLab || '')
                 .transitionDuration(_CONF.TRANSITION_DURATION)
-                .group(cGroup);
+                .group(cGroup)
+                .excludedColor('#b8b8b8');
 
             return _chart;
         };

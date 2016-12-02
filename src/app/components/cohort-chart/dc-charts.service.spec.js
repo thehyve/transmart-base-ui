@@ -50,7 +50,8 @@ describe('DcChartsService Unit Tests', function () {
             title: func,
             calculateColorDomain: func,
             html: func,
-            formatNumber: func
+            formatNumber: func,
+            excludedColor: func
         };
         cDimension = {};
         cGroup = {

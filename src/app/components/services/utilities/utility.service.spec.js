@@ -8,7 +8,7 @@ describe('UtilityService unit tests', function () {
 
     var utilityService;
 
-    beforeEach(inject(function(_UtilityService_) {
+    beforeEach(inject(function (_UtilityService_) {
         utilityService = _UtilityService_;
     }));
 
@@ -23,6 +23,19 @@ describe('UtilityService unit tests', function () {
 
             var uid1 = utilityService.guid();
             expect(uid).not.toEqual(uid1);
+        });
+    });
+
+    describe('contains', function () {
+
+        it('should check if a string is contained by an array', function () {
+            var str = 'a';
+            var arr = ['a', 'b'];
+            var isContained = utilityService.contains(str, arr);
+            expect(isContained).toBe(true);
+
+            isContained = utilityService.contains('c', arr);
+            expect(isContained).toBe(false);
         });
     });
 

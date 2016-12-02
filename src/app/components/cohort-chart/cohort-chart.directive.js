@@ -7,8 +7,8 @@
  * @description handles cohort chart creation and user-interaction
  */
 angular.module('transmartBaseUi')
-    .directive('tsCohortChart', ['DcChartsService', 'CohortSelectionService', 'AlertService',
-        function (DcChartsService, CohortSelectionService, AlertService) {
+    .directive('tsCohortChart', ['DcChartsService', 'CohortSelectionService', 'CohortExportService', 'AlertService',
+        function (DcChartsService, CohortSelectionService, CohortExportService, AlertService) {
 
             var _scope = {
                 tsGridster: '=',
@@ -177,6 +177,23 @@ angular.module('transmartBaseUi')
                         }
                     };
 
+                    scope.exportImage = function (label, imgType) {
+                        switch (imgType) {
+                            case 'png':
+                                CohortExportService.exportChartPNG(label);
+                                break;
+                            case 'pdf':
+                                CohortExportService.exportChartPDF(label);
+                                break;
+                            case 'svg':
+                                CohortExportService.exportChartSVG(label);
+                                break;
+                            default:
+                                CohortExportService.exportChartPNG(label);
+                                break;
+
+                        }
+                    }
                 }// -- end of the link function --
             };
         }]);
