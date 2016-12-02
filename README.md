@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/thehyve/transmart-base-ui.svg)](https://travis-ci.org/thehyve/transmart-base-ui)
 [![codecov.io](https://codecov.io/gh/thehyve/transmart-base-ui/branch/dev/graphs/badge.svg)](https://codecov.io/gh/thehyve/transmart-base-ui/branch/dev)
 
-# transmart-base-ui
+# TranSMART Glowing Bear
 Boilerplate code for tranSMART UI
 
 ## Demo
@@ -135,9 +135,33 @@ https://github.com/angular-ui/ui-router/wiki/Frequently-Asked-Questions#how-to-c
 
 ## Configuring TranSMART Endpoint
 
-Endpoints are defined in src/app/config.json
+TranSMART Endpoints are defined in [`src/app/config.json`](https://github.com/thehyve/transmart-base-ui/blob/dev/src/app/config.json)
 
-To serve as endpoint for TranSMART Glowing Bear, TranSMART Backend need to support Cross Origin Resource Sharing (CORS) 
-so that its APIs can be consumed by Glowing Bear. Enabling CORS support can be done in several ways such as allowing 
-cross origin resource sharing on application server where TranSMART Backend is deployed or installing Grails CORS plugin 
-in tranSMART Backend (development purpose only). 
+```
+{
+    "<environtment label>": {
+        "IS_TESTING": <flag to indicate if environtment for testing or not; true/false>,        
+        "IDLE_IN_MINUTES": <idle time in minutes>,        
+        "MASTER_ENDPOINT_CONFIG": // main endpoint        
+        {
+            "title": <endpoint title>,
+            "url": "<transmart backend URL, eg: http://127.0.0.1/transmart>",
+            "apiVersion": <transmart API version>,
+            "isOAuth": <flag to indicate if backend supports oAuth or not; true/false>,
+            "isMaster": <flag to indicate if endpoint is master or not; true/false>
+        },
+        "CONNECTIONS": [
+            {
+                "title": <endpoint title>,
+                "url": "<other transmart backend URL, eg: http://foo.bar/transmart>",
+                "apiVersion": <transmart API version>,
+                "isOAuth": <flag to indicate if backend supports oAuth or not; true/false>,
+            }
+            ...
+        ]
+    }
+```
+
+When an endpoint is located in different domain from Glowing Bear UI, TranSMART Backend need to enable [Cross Origin Resource Sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS) so that its APIs can be consumed by Glowing Bear UI. 
+
+Enabling CORS can be achieved by allowing cross origin resource sharing on application server where TranSMART Backend is deployed or installing Grails CORS plugin in tranSMART Backend (development purpose only). 
