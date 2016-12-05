@@ -13,7 +13,8 @@
             </uib-tab-heading>
 
             <div class="row cohort-selection-boxset" id="cohort-selection-ui-layout-div">
-                <div ng-class="{'col-md-6': vm.boxes.length > 1}" class="col-md-12 cohort-selection-box" ng-repeat="box in vm.boxes track by box.boxId"
+                <div ng-class="{'col-md-6': vm.boxes.length > 1}" class="col-md-12 cohort-selection-box"
+                     ng-repeat="box in vm.boxes track by box.boxId"
                      id="cohort-box-container-{{box.boxId}}">
                     <cohort-selection box="box" index={{$index}}></cohort-selection>
                 </div>
