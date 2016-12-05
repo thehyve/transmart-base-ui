@@ -141,20 +141,20 @@ TranSMART Endpoints are defined in [`src/app/config.json`](https://github.com/th
 {
     "<environtment label>": {
         "IS_TESTING": <flag to indicate if environtment for testing or not; true/false>,        
-        "IDLE_IN_MINUTES": <idle time in minutes>,        
+        "IDLE_IN_MINUTES": <idle time in minutes, eg: 5>,        
         "MASTER_ENDPOINT_CONFIG": // main endpoint        
         {
             "title": <endpoint title>,
-            "url": "<transmart backend URL, eg: http://127.0.0.1/transmart>",
-            "apiVersion": <transmart API version>,
+            "url": <transmart backend URL, eg: "http://127.0.0.1/transmart">,
+            "apiVersion": <transmart API version, eg: "v1">,
             "isOAuth": <flag to indicate if backend supports oAuth or not; true/false>,
             "isMaster": <flag to indicate if endpoint is master or not; true/false>
         },
         "CONNECTIONS": [
             {
                 "title": <endpoint title>,
-                "url": "<other transmart backend URL, eg: http://foo.bar/transmart>",
-                "apiVersion": <transmart API version>,
+                "url": <other transmart backend URL, eg: "http://foo.bar/transmart">,
+                "apiVersion": <transmart API version, eg: "v1">,
                 "isOAuth": <flag to indicate if backend supports oAuth or not; true/false>,
             }
             ...
