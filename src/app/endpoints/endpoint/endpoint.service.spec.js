@@ -38,7 +38,13 @@ describe('Endpoint Service Unit Tests', function () {
         var _endpoint, _fakeRestangular;
 
         beforeEach(function () {
-            _endpoint = {title: "local", url: "http://localhost:8080/transmart", isOAuth: true, isMaster: true, apiVersion: 'v1'};
+            _endpoint = {
+                title: "local",
+                url: "http://localhost:8080/transmart",
+                isOAuth: true,
+                isMaster: true,
+                apiVersion: 'v1'
+            };
             _fakeRestangular = {foo: 'Bar'};
             spyOn(ResourceService, 'createResourceServiceByEndpoint').and.returnValue(_fakeRestangular);
         });
@@ -47,8 +53,8 @@ describe('Endpoint Service Unit Tests', function () {
             var _res =
                 endpointService.initializeEndpointWithCredentials
                 (
-                 _endpoint,
-                 "access_token=d05451ad-57e1-4703-ae0e-5ece16017e46&token_type=bearer&expires_in=33295&scope=write read"
+                    _endpoint,
+                    "access_token=d05451ad-57e1-4703-ae0e-5ece16017e46&token_type=bearer&expires_in=33295&scope=write read"
                 );
             expect(_res.status).toEqual('active');
             expect(_res.access_token).toEqual('d05451ad-57e1-4703-ae0e-5ece16017e46');
@@ -69,12 +75,39 @@ describe('Endpoint Service Unit Tests', function () {
             spyOn(ResourceService, 'createResourceServiceByEndpoint').and.returnValue(_fakeRestangular);
         });
 
-        it ('should retrieve stored endpoints from $cookie', function () {
+        it('should retrieve stored endpoints from $cookie', function () {
             var _x = endpointService.retrieveStoredEndpoints('fooCookieKey');
             _x.forEach(function (endpoint) {
                 expect(endpoint.restangular).toEqual(_fakeRestangular);
             })
         });
 
+    });
+
+    describe('login', function () {
+        it('should invoke initializeEndpoints', function () {
+            spyOn(endpointService, 'initializeEndpoints');
+            endpointService.login();
+            expect(endpointService.initializeEndpoints).toHaveBeenCalled();
+        });
+    });
+
+    describe('logout', function () {
+        it('should remove cookies, and the flag loggedIn should be false', function () {
+            spyOn($cookies, 'remove');
+            endpointService.logout();
+            expect($cookies.remove).toHaveBeenCalled();
+            expect(endpointService.loggedIn).toBe(false);
+        });
+    });
+
+    describe('clearStoredEndpoints', function () {
+        it('should remove cookies and call initializeMasterEndpoint', function () {
+            spyOn($cookies, 'remove');
+            spyOn(endpointService, 'initializeMasterEndpoint');
+            endpointService.clearStoredEndpoints();
+            expect($cookies.remove).toHaveBeenCalled();
+            expect(endpointService.initializeMasterEndpoint).toHaveBeenCalled();
+        });
     });
 });

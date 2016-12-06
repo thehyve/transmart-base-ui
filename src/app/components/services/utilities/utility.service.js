@@ -23,5 +23,16 @@ angular.module('transmartBaseUi')
             });
         };
 
+        /**
+         * Check if a string exists in an array
+         * @param str
+         * @param arr
+         * @returns {boolean}
+         * @memberof UtilityService
+         */
+        service.contains = function (str, arr) {
+            return arr.indexOf(str) !== -1;
+        }
+
         return service;
     }]);
