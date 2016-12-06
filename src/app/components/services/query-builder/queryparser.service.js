@@ -106,11 +106,12 @@ angular.module('transmartBaseUi').factory('QueryParserService',
          * @returns {Promise}
          */
         service.convertCohortFiltersFromQueryDefinition = function (queryObj, cohortSelectionController) {
-            var studyNode, conceptPath, filters;
 
             // Loop through the panels in the query
             _.each(makeList(queryObj.panel), function(panel) {
-                filters = [];
+
+                var studyNode, conceptPath, filters = [];
+
                 // Loop through the items in the panel
                 _.each(makeList(panel.item), function(item) {
 
@@ -154,7 +155,6 @@ angular.module('transmartBaseUi').factory('QueryParserService',
                 if (studyNode) {
                     TreeNodeService.expandConcept(studyNode, conceptPath)
                         .then(function (node) {
-
                             // Based on the type of node, make modifications to filters or node
                             if (TreeNodeService.isCategoricalParentNode(node) ||
                                 TreeNodeService.isHighDimensionalNode(node)) {

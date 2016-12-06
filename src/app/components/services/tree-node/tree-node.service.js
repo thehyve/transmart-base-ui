@@ -140,9 +140,11 @@ angular.module('transmartBaseUi').factory('TreeNodeService', ['$q', function ($q
             $q.all(promises)
                 .then (function (loadedNodes) {
                     node.isLoading = false;
+                    // remove failed node with unauthorized status
                     var _tmp = _.remove(loadedNodes, function (node) {
                         return node.type === 'FAILED' && node.status === 403;
                     });
+                    //
                     node.nodes = loadedNodes;
                     deferred.resolve(loadedNodes);
                 });
@@ -230,8 +232,9 @@ angular.module('transmartBaseUi').factory('TreeNodeService', ['$q', function ($q
                 var matchedNode = _.find(childNodes, {title:conceptSplit[0]});
                 if (matchedNode) {
                     if (conceptSplit.length > 1) {
-                        _this.expandConcept(matchedNode, conceptSplit.slice(1)).then(function (childNodes) {
-                            deferred.resolve(childNodes);
+                        _this.expandConcept(matchedNode, conceptSplit.slice(1))
+                            .then(function (childNodes) {
+                                deferred.resolve(childNodes);
                         });
                     } else {
                         _this.populateChildren(matchedNode).then(function (childNodes) {
