@@ -115,39 +115,45 @@ angular.module('transmartBaseUi').factory('TreeNodeService', ['$q', function ($q
      * @returns {Promise}
      */
     service.getNodeChildren = function (node, prefix) {
-        var childLinks, deferred = $q.defer();
+        var _this = this,  childLinks, promises = [], deferred = $q.defer();
         prefix = prefix || '';
 
         if (node.loaded) {
+            node.isLoading = false;
             deferred.resolve(node.nodes);
             return deferred.promise;
         }
 
         if (node.type === 'FAILED_CALL') {
+            node.isLoading = false;
             deferred.reject('Error node');
             return deferred.promise;
         }
 
         childLinks = node.restObj._links.children; // check if it has child links
+
         if (childLinks) {
-            // start to load its children
-            childLinks.forEach(function (link) {
-                service.loadNode(node, link, prefix)
-                    .then(function (newNode) {
-                        node.nodes.push(newNode);
-                    })
-                    .catch(function (errNode) {
-                        if (errNode.status !== 403) {
-                            node.nodes.push(errNode);
-                        }
-                    })
-                    .finally(function () {
-                        deferred.resolve(node.nodes);
-                    });
+            // collect load node calls
+            promises =  _.map(childLinks, function (link) {
+               return  _this.loadNode(node, link, prefix);
             });
+
+            // fire them in one go
+            $q.all(promises)
+                .then (function (loadedNodes) {
+                    node.isLoading = false;
+                    // remove failed node with unauthorized status
+                    var _tmp = _.remove(loadedNodes, function (node) {
+                        return node.type === 'FAILED' && node.status === 403;
+                    });
+                    // add filtered nodes
+                    node.nodes = loadedNodes;
+                    deferred.resolve(loadedNodes);
+                });
         } else {
             // end of node
             node.loaded = true;
+            node.isLoading = false;
             deferred.resolve(node.nodes);
         }
         return deferred.promise;
@@ -211,12 +217,7 @@ angular.module('transmartBaseUi').factory('TreeNodeService', ['$q', function ($q
 
         node.isLoading = true;
 
-        var promise = service.getNodeChildren(node, prefix)
-            .finally(function () {
-                node.isLoading = false;
-        });
-
-        return promise;
+        return service.getNodeChildren(node, prefix);
     };
 
     /**
@@ -226,38 +227,29 @@ angular.module('transmartBaseUi').factory('TreeNodeService', ['$q', function ($q
      * @returns {Promise}
      */
     service.expandConcept = function(node, conceptSplit) {
-        var deferred = $q.defer();
+        var _this = this, deferred = $q.defer();
 
         // Retrieve all children of the node.
         // It's possible that these still need to be loaded.
-        service.populateChildren(node)
-            .then(function(result) {
-
-                // find matching child node
-                var matchingChild = undefined;
-                _.forEach(result, function(child) {
-                    if (child.title == conceptSplit[0]) {
-                        matchingChild = child;
-                        return false; //break from forEach
+        _this.populateChildren(node)
+            .then(function (childNodes) {
+                var matchedNode = _.find(childNodes, {title:conceptSplit[0]});
+                if (matchedNode) {
+                    if (conceptSplit.length > 1) {
+                        // expand the matching child recursively
+                        _this.expandConcept(matchedNode, conceptSplit.slice(1))
+                            .then(function (childNodes) {
+                                deferred.resolve(childNodes);
+                        });
+                    } else {
+                        // We found our target node, but expand one level deeper.
+                        // This is required for categorical nodes, because
+                        // they only have their type set properly when their
+                        // children are loaded.
+                        _this.populateChildren(matchedNode).then(function (childNodes) {
+                            deferred.resolve(matchedNode);
+                        });
                     }
-                });
-
-                if (matchingChild && conceptSplit.length > 1) {
-                    // expand the matching child recursively
-                    service.expandConcept(matchingChild, conceptSplit.slice(1))
-                        .then(function(result) {
-                            deferred.resolve(result);
-                        });
-                }
-                else {
-                    // We found our target node, but expand one level deeper.
-                    // This is required for categorical nodes, because
-                    // they only have their type set properly when their
-                    // children are loaded.
-                    service.populateChildren(matchingChild)
-                        .then(function(result) {
-                            deferred.resolve(matchingChild);
-                        });
                 }
             });
 

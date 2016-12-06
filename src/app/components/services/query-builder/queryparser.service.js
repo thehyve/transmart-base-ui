@@ -6,8 +6,8 @@
  * @name QueryParserService
  */
 angular.module('transmartBaseUi').factory('QueryParserService',
-    ['XML2JSONService', 'StudyListService', 'TreeNodeService', 'PromiseQueue',
-    function (XML2JSONService, StudyListService, TreeNodeService, PromiseQueue) {
+    ['XML2JSONService', 'StudyListService', 'TreeNodeService',
+    function (XML2JSONService, StudyListService, TreeNodeService) {
 
         var service = {};
 
@@ -26,8 +26,7 @@ angular.module('transmartBaseUi').factory('QueryParserService',
 
             // Loop through the panels in the query
             _.each(makeList(queryObj.panel), function(panel) {
-                var studyNode, conceptPath;
-                var filters = [];
+                var conceptPath, filters = [];
 
                 // Loop through the items in the panel
                 _.each(makeList(panel.item), function(item) {
@@ -85,7 +84,7 @@ angular.module('transmartBaseUi').factory('QueryParserService',
             });
 
             return description;
-        }
+        };
 
         /**
          * Converts the selections in the cohort filters from i2b2 query xml.
@@ -97,7 +96,7 @@ angular.module('transmartBaseUi').factory('QueryParserService',
         service.convertCohortFiltersFromXML = function (queryXML, cohortSelectionController) {
             var queryObj = XML2JSONService.xml2json(queryXML).query_definition;
             return service.convertCohortFiltersFromQueryDefinition(queryObj, cohortSelectionController);
-        }
+        };
 
         /**
          * Converts the selections in the cohort filters from i2b2 query xml.
@@ -107,13 +106,11 @@ angular.module('transmartBaseUi').factory('QueryParserService',
          * @returns {Promise}
          */
         service.convertCohortFiltersFromQueryDefinition = function (queryObj, cohortSelectionController) {
-            // We'll collect a queue of promises that cannot be executed in parallel
-            var promiseQueue = new PromiseQueue();
 
             // Loop through the panels in the query
             _.each(makeList(queryObj.panel), function(panel) {
-                var studyNode, conceptPath;
-                var filters = [];
+
+                var studyNode, conceptPath, filters = [];
 
                 // Loop through the items in the panel
                 _.each(makeList(panel.item), function(item) {
@@ -156,35 +153,31 @@ angular.module('transmartBaseUi').factory('QueryParserService',
 
                 // Add a new task to the queue
                 if (studyNode) {
-                    promiseQueue.addPromiseCreator(function () {
-                        return TreeNodeService.expandConcept(studyNode, conceptPath)
-                            .then(function (node) {
+                    TreeNodeService.expandConcept(studyNode, conceptPath)
+                        .then(function (node) {
+                            // Based on the type of node, make modifications to filters or node
+                            if (TreeNodeService.isCategoricalParentNode(node) ||
+                                TreeNodeService.isHighDimensionalNode(node)) {
+                                filters = [];
+                            }
 
-                                // Based on the type of node, make modifications to filters or node
-                                if (TreeNodeService.isCategoricalParentNode(node) ||
-                                        TreeNodeService.isHighDimensionalNode(node)) {
-                                    filters = [];
-                                }
-                                if (TreeNodeService.isCategoricalLeafNode(node)) {
-                                    node = node.parent;
-                                }
-                                if (TreeNodeService.isNumericalNode(node)) {
-                                    // Now that we know the type of the node is numerical,
-                                    // we must check if we have the proper type of filters
-                                    filters = filters.filter(function(filter) {
-                                        return filter.filterType == 'RangedFilter';
-                                    });
-                                }
+                            if (TreeNodeService.isCategoricalLeafNode(node)) {
+                                node = node.parent;
+                            }
 
-                                // Add the node and filters to the workspace
-                                cohortSelectionController.addNodeWithFilters(node, filters);
-                            });
-                    });
+                            if (TreeNodeService.isNumericalNode(node)) {
+                                // Now that we know the type of the node is numerical,
+                                // we must check if we have the proper type of filters
+                                filters = filters.filter(function(filter) {
+                                    return filter.filterType == 'RangedFilter';
+                                });
+                            }
+
+                            // Add the node and filters to the workspace
+                            cohortSelectionController.addNodeWithFilters(node, filters);
+                        });
                 }
             });
-
-            // Start expanding the nodes
-            return promiseQueue.execute();
         };
 
         return service;
