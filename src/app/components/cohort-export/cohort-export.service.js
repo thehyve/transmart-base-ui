@@ -200,7 +200,7 @@ angular.module('transmartBaseUi')
             var svgString = service.getSVGString(label);
             var chartTitle = label.name + ' - ' + label.study._embedded.ontologyTerm.name;
             var blob = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
-            saveAs(blob, chartTitle); // FileSaver function
+            saveAs(blob, chartTitle+'.svg'); // FileSaver function
         };
 
         /**
@@ -209,6 +209,7 @@ angular.module('transmartBaseUi')
          * @param label
          */
         service.exportChartPDF = function (label) {
+            //TODO: convert to vector graphics
             var svgString = service.getSVGString(label);
             var chartTitle = label.name + ' - ' + label.study._embedded.ontologyTerm.name;
             var ratio = label.sizeY / label.sizeX;
@@ -217,14 +218,15 @@ angular.module('transmartBaseUi')
             var imgsrc = 'data:image/svg+xml;base64,' +
                 btoa(decodeURIComponent(encodeURIComponent(svgString)));
             var canvas = document.createElement("canvas");
-            var context = canvas.getContext("2d");
             canvas.width = width;
             canvas.height = height;
-
+            var context = canvas.getContext("2d");
             var image = new Image;
             image.src = imgsrc;
             image.onload = function () {
                 context.clearRect(0, 0, width, height);
+                context.fillStyle="#FFFFFF";
+                context.fillRect(0 , 0 , canvas.width, canvas.height);
                 context.drawImage(image, 0, 0, width, height);
                 var imgData = canvas.toDataURL('image/png');
                 var doc = new jsPDF('landscape', 'pt', [width, height]);

@@ -31,7 +31,7 @@ angular.module('transmartBaseUi')
          * @memberof UtilityService
          */
         service.contains = function (str, arr) {
-            return arr.indexOf(str) === -1 ? false : true;
+            return arr.indexOf(str) !== -1;
         }
 
         return service;
