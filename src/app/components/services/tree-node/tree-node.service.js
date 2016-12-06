@@ -133,10 +133,12 @@ angular.module('transmartBaseUi').factory('TreeNodeService', ['$q', function ($q
         childLinks = node.restObj._links.children; // check if it has child links
 
         if (childLinks) {
+            // collect load node calls
             promises =  _.map(childLinks, function (link) {
                return  _this.loadNode(node, link, prefix);
             });
 
+            // fire them in one go
             $q.all(promises)
                 .then (function (loadedNodes) {
                     node.isLoading = false;
@@ -144,7 +146,7 @@ angular.module('transmartBaseUi').factory('TreeNodeService', ['$q', function ($q
                     var _tmp = _.remove(loadedNodes, function (node) {
                         return node.type === 'FAILED' && node.status === 403;
                     });
-                    //
+                    // add filtered nodes
                     node.nodes = loadedNodes;
                     deferred.resolve(loadedNodes);
                 });
@@ -227,16 +229,23 @@ angular.module('transmartBaseUi').factory('TreeNodeService', ['$q', function ($q
     service.expandConcept = function(node, conceptSplit) {
         var _this = this, deferred = $q.defer();
 
+        // Retrieve all children of the node.
+        // It's possible that these still need to be loaded.
         _this.populateChildren(node)
             .then(function (childNodes) {
                 var matchedNode = _.find(childNodes, {title:conceptSplit[0]});
                 if (matchedNode) {
                     if (conceptSplit.length > 1) {
+                        // expand the matching child recursively
                         _this.expandConcept(matchedNode, conceptSplit.slice(1))
                             .then(function (childNodes) {
                                 deferred.resolve(childNodes);
                         });
                     } else {
+                        // We found our target node, but expand one level deeper.
+                        // This is required for categorical nodes, because
+                        // they only have their type set properly when their
+                        // children are loaded.
                         _this.populateChildren(matchedNode).then(function (childNodes) {
                             deferred.resolve(matchedNode);
                         });
