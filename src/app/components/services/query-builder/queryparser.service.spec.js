@@ -77,7 +77,7 @@ describe('QueryParserService Unit Tests', function () {
         scope.$digest(); // to make promise resolve
 
         expect(ctrl.addNodeWithFilters).toHaveBeenCalledWith(numericNode, [rangedFilter]);
-        expect(ctrl.addNodeWithFilters).toHaveBeenCalledWith(categoricalParentNode, [['carcinoid'], ['hematoma']]);
+        expect(ctrl.addNodeWithFilters).toHaveBeenCalledWith(categoricalParentNode, ['carcinoid', 'hematoma']);
         expect(ctrl.addNodeWithFilters).toHaveBeenCalledTimes(2);
     });
 
@@ -112,8 +112,8 @@ describe('QueryParserService Unit Tests', function () {
         scope.$digest(); // to make promise resolve
 
         expect(ctrl.addNodeWithFilters).toHaveBeenCalledWith(categoricalParentNode, []);
-        expect(ctrl.addNodeWithFilters).toHaveBeenCalledWith(categoricalParentNode, [['female']]);
-        expect(ctrl.addNodeWithFilters).toHaveBeenCalledWith(categoricalParentNode, [['carcinoid'], ['hematoma']]);
+        expect(ctrl.addNodeWithFilters).toHaveBeenCalledWith(categoricalParentNode, ['female']);
+        expect(ctrl.addNodeWithFilters).toHaveBeenCalledWith(categoricalParentNode, ['carcinoid', 'hematoma']);
         expect(ctrl.addNodeWithFilters).toHaveBeenCalledTimes(3);
     });
 

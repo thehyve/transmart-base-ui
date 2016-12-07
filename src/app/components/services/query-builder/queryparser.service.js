@@ -146,7 +146,7 @@ angular.module('transmartBaseUi').factory('QueryParserService',
                         // the type of node yet, so we'll figure this out later.
                         // In any case, we'll need to store the filter in case it is
                         // a categorical value and we have multiple of them
-                        filters.push(conceptPath.slice(-1));
+                        filters.push(conceptPath.slice(-1)[0]);
                     }
 
                 });
