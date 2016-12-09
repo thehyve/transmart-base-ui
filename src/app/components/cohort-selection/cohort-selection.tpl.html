@@ -28,6 +28,21 @@
                 tooltip-trigger="mouseenter"
                 tooltip-placement="top"
                 popupDelay="1000"><span class="glyphicon glyphicon-erase"></span></button>
+
+        <i class="dropdown dropdown-i">
+            <button class="btn btn-secondary" data-toggle="dropdown"
+                    uib-tooltip="Export workspace to PNG/PDF"
+                    tooltip-trigger="mouseenter"
+                    tooltip-placement="top"
+                    popupDelay="1000">
+                <span class="glyphicon glyphicon-save"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a ng-click="cohortSelectionCtrl.exportWorkspace('png')">PNG</a></li>
+                <li><a ng-click="cohortSelectionCtrl.exportWorkspace('pdf')">PDF</a></li>
+            </ul>
+        </i>
+
     </div>
     <div class="btn-group" role="group">
         <button type="button"
