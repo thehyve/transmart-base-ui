@@ -19,7 +19,7 @@ exports.config = {
     // path relative to the current config file
     frameworkPath: require.resolve('protractor-cucumber-framework'),
 
-//    baseUrl: 'http://localhost:3000',
+    baseUrl: 'http://localhost:8001',
 
     // Spec patterns are relative to the current working directory when
     // protractor is called.
