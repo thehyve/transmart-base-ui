@@ -8,7 +8,6 @@
 angular.module('transmartBaseUi')
     .controller('SidebarCtrl', ['$scope', 'StudyListService',
         function ($scope, StudyListService) {
-
             var vm = this;
 
             vm.studies = [];
