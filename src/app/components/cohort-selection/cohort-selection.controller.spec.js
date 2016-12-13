@@ -1197,4 +1197,49 @@ describe('CohortSelectionCtrl', function () {
         });
     });
 
+    describe('handling canvasImageLoadedEvent', function () {
+
+        it('should handle canvasImageLoadedEvent with png export', function () {
+            ctrl.cs.charts = [
+                {}
+            ];
+            var canvas = {
+                toBlob: function () {
+                }
+            };
+            spyOn(canvas, 'toBlob');
+            var imgType = 'png';
+            var args = {
+                canvas: canvas,
+                imageType: imgType
+            };
+            for(var i=0; i<ctrl.cs.charts.length; i++) {
+                scope.$emit('canvasImageLoadedEvent', args);
+            }
+            expect(canvas.toBlob).toHaveBeenCalled();
+        });
+
+        it('should handle canvasImageLoadedEvent with pdf export', function () {
+            ctrl.cs.charts = [
+                {}
+            ];
+            var canvas = {
+                width: 200,
+                height: 200,
+                toDataURL: function () {
+                }
+            };
+            spyOn(canvas, 'toDataURL');
+            var imgType = 'pdf';
+            var args = {
+                canvas: canvas,
+                imageType: imgType
+            };
+            for(var i=0; i<ctrl.cs.charts.length; i++) {
+                scope.$emit('canvasImageLoadedEvent', args);
+            }
+            expect(canvas.toDataURL).toHaveBeenCalled();
+        });
+    });
+
 });

@@ -10,10 +10,11 @@ angular.module('transmartBaseUi')
      */
     .controller('CohortSelectionCtrl',
         ['$q', '$element', '$scope', 'CohortSelectionService', 'StudyListService', 'DcChartsService',
-            'AlertService', '$uibModal', 'TreeNodeService', 'ContentService',
+            'AlertService', '$uibModal', 'TreeNodeService', 'CohortExportService', 'ContentService',
             function ($q, $element, $scope, CohortSelectionService, StudyListService, DcChartsService,
-                      AlertService, $uibModal, TreeNodeService, ContentService) {
+                      AlertService, $uibModal, TreeNodeService, CohortExportService, ContentService) {
                 var vm = this;
+                vm.$scope = $scope;
                 vm.isRecordingHistory = false;
                 vm.boxIndex = (+$scope.index + 1);
                 vm.boxName = 'Cohort-' + vm.boxIndex;
@@ -360,13 +361,37 @@ angular.module('transmartBaseUi')
 
                 /**
                  * Clear all the charts from the current cohort selection
+                 * @memberof CohortSelectionCtrl
                  */
                 vm.clearSelection = function () {
                     vm.reset();
                     vm.updateDimensions();
                 };
 
+                /**
+                 * Export workspace as PNG/PDF
+                 * @memberof CohortSelectionCtrl
+                 */
+                vm.exportWorkspace = function (imgType) {
+                    var targetDiv = null;
+                    var cohortSelectionDivs = angular.element('cohort-selection');
 
+                    _.forEach(cohortSelectionDivs, function (div) {
+                        var targetId = angular.element(div).attr('id');
+                        if (targetId === vm.boxId) {
+                            targetDiv = div;
+                        }
+                    });
+                    CohortExportService.exportWorkspaceImage(targetDiv, imgType);
+                };
+
+                /**
+                 * Combine two charts to form a third chart, with filtering option
+                 * @param chart1
+                 * @param chart2
+                 * @param filterObj
+                 * @memberof CohortSelectionCtrl
+                 */
                 vm.combineCharts = function (chart1, chart2, filterObj) {
 
                     var _combinationLabel = {
@@ -1206,6 +1231,36 @@ angular.module('transmartBaseUi')
                     if (!_.isEqual(newVal, oldVal)) {
                         vm.boxIndex = (+newVal + 1);
                         vm.boxName = 'Cohort-' + vm.boxIndex;
+                    }
+                });
+
+                var loadedNumImages = 0;
+                $scope.$on('canvasImageLoadedEvent', function (event, args) {
+
+                    loadedNumImages++;
+                    if (loadedNumImages === vm.cs.charts.length) {
+                        var canvas = args.canvas,
+                            imgType = args.imageType;
+
+                        if (imgType === 'png') {
+                            canvas.toBlob(function (dataBlob) {
+                                saveAs(dataBlob, 'workspace.png');
+                            });
+                            loadedNumImages = 0;
+                        }
+                        else if(imgType === 'pdf') {
+                            var image = new Image();
+                            var width = canvas.width, height = canvas.height;
+                            var imgData = canvas.toDataURL('image/png');
+                            image.src = imgData;
+                            image.onload = function () {
+                                var pdf = new jsPDF('landscape', 'pt', [width, height]);
+                                pdf.addImage(imgData, 'PNG', 0, 0, width, height, 'imageAlias', 'FAST');
+                                pdf.save('workspace.pdf');
+                            };
+
+                            loadedNumImages = 0;
+                        }
                     }
                 });
 
