@@ -32,10 +32,16 @@ angular.module('transmartBaseUi', [
         'tmEndpoints',
         'ngIdle'
     ])
-    .config(['$stateProvider', '$urlRouterProvider', 'cfpLoadingBarProvider', '$locationProvider',
+    .config(['$qProvider', '$stateProvider', '$urlRouterProvider', 'cfpLoadingBarProvider', '$locationProvider',
         '$uibTooltipProvider', '$compileProvider', 'IdleProvider', 'KeepaliveProvider', 'IDLE_IN_MINUTES',
-        function ($stateProvider, $urlRouterProvider, cfpLoadingBarProvider, $locationProvider,
+        function ($qProvider, $stateProvider, $urlRouterProvider, cfpLoadingBarProvider, $locationProvider,
                   $uibTooltipProvider, $compileProvider, IdleProvider, KeepaliveProvider, IDLE_IN_MINUTES) {
+
+            /*
+             * A known issue is found in 1.5.9 and 1.6.0.
+             * Patch solution is to manually disable unhandled rejections.
+             */
+            $qProvider.errorOnUnhandledRejections(false);
 
             $locationProvider.html5Mode({
                 enabled: true,
