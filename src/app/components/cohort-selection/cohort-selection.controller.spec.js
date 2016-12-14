@@ -241,6 +241,21 @@ describe('CohortSelectionCtrl', function () {
             expect(ctrl.onNodeDrop).toHaveBeenCalledWith(dropEvent, {}, nodes);
             expect(!angular.element(dropEvent.target).hasClass('chart-container-hover'));
         });
+
+        it('should alert the user when different studies get mixed', function () {
+            spyOn(CohortSelectionService, 'isNodeStudyConflict').and.callFake(function () {
+                return true;
+            });
+            spyOn(CohortSelectionService, 'getBox').and.callFake(function () {
+                return {studyId: ''};
+            });
+            spyOn(AlertService, 'add');
+            ctrl.onNodeDrop({}, '', pieNode);
+            expect(CohortSelectionService.isNodeStudyConflict).toHaveBeenCalled();
+            expect(CohortSelectionService.getBox).toHaveBeenCalled();
+            expect(AlertService.add).toHaveBeenCalled();
+
+        });
     });
 
     describe('restoreCrossfilter', function () {
@@ -430,7 +445,7 @@ describe('CohortSelectionCtrl', function () {
             'node.nodes is non-empty and has categorical leaf child nodes', function () {
             node.nodes = [{
                 id: 'aNode'
-            }]
+            }];
             TreeNodeService.isCategoricalLeafNode = function (_node) {
                 return true;
             };
@@ -1213,7 +1228,7 @@ describe('CohortSelectionCtrl', function () {
         });
 
         it('should give alert when the number of labels exceeds max', function () {
-            _.times(ctrl.cs.maxNoOfDimensions+1, function () {
+            _.times(ctrl.cs.maxNoOfDimensions + 1, function () {
                 ctrl.cs.labels.push(ageNode.label);
             });
             ctrl.addLabel(genderNode.observations[0], genderNode, {});
@@ -1240,7 +1255,7 @@ describe('CohortSelectionCtrl', function () {
                 canvas: canvas,
                 imageType: imgType
             };
-            for(var i=0; i<ctrl.cs.charts.length; i++) {
+            for (var i = 0; i < ctrl.cs.charts.length; i++) {
                 scope.$emit('canvasImageLoadedEvent', args);
             }
             expect(canvas.toBlob).toHaveBeenCalled();
@@ -1262,7 +1277,7 @@ describe('CohortSelectionCtrl', function () {
                 canvas: canvas,
                 imageType: imgType
             };
-            for(var i=0; i<ctrl.cs.charts.length; i++) {
+            for (var i = 0; i < ctrl.cs.charts.length; i++) {
                 scope.$emit('canvasImageLoadedEvent', args);
             }
             expect(canvas.toDataURL).toHaveBeenCalled();

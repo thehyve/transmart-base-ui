@@ -169,4 +169,35 @@ describe('CohortSelectionService', function () {
         });
     });
 
+    describe('isNodeStudyConflict', function () {
+        var node, box;
+        beforeEach(function () {
+            node = {
+                study: {
+                    id: 'studyId1'
+                }
+            };
+            box = {
+                studyId: 'studyId2'
+            };
+
+            spyOn(CohortSelectionService, 'getBox').and.callFake(function () {
+                return box;
+            });
+        });
+
+        it('should return true when the node study is different from that in the workspace', function () {
+            var isConflict = CohortSelectionService.isNodeStudyConflict(node, '');
+            expect(CohortSelectionService.getBox).toHaveBeenCalled();
+            expect(isConflict).toBe(true);
+        });
+
+        it('should assign study id to workspace box when the field is undefined', function () {
+            box.studyId = undefined;
+            var isConflict = CohortSelectionService.isNodeStudyConflict(node, '');
+            expect(box.studyId).toBe(node.study.id);
+            expect(isConflict).toBe(false);
+        });
+    });
+
 });
