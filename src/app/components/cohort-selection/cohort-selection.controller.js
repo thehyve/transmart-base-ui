@@ -997,27 +997,36 @@ angular.module('transmartBaseUi')
                  */
                 vm.onNodeDrop = function (event, info, node) {
                     var promise = undefined;
-                    node.label = undefined; // clear existing label
+                    var isConflict = CohortSelectionService.isNodeStudyConflict(node, vm.boxId);
+                    if(!isConflict) {
+                        node.label = undefined; // clear existing label
 
-                    if (TreeNodeService.isCategoricalLeafNode(node)) { //leaf node for pie chart
-                        var chart =
-                            CohortSelectionService.findChartByConceptPath(node.parent.restObj.fullName, vm.cs.charts);
-                        if (chart == null) {
-                            var filters = [{
-                                label: node.parent.restObj.fullName,
-                                dcFilters: [node.title]
-                            }];
-                            promise = vm.addNodeToActiveCohortSelection(node.parent, filters);
+                        if (TreeNodeService.isCategoricalLeafNode(node)) { //leaf node for pie chart
+                            var chart =
+                                CohortSelectionService.findChartByConceptPath(node.parent.restObj.fullName, vm.cs.charts);
+                            if (chart == null) {
+                                var filters = [{
+                                    label: node.parent.restObj.fullName,
+                                    dcFilters: [node.title]
+                                }];
+                                promise = vm.addNodeToActiveCohortSelection(node.parent, filters);
+                            }
+                            else {
+                                vm.filterChart(chart, [node.title]);
+                            }
                         }
                         else {
-                            vm.filterChart(chart, [node.title]);
+                            promise = vm.addNodeToActiveCohortSelection(node, []);
                         }
                     }
                     else {
-                        promise = vm.addNodeToActiveCohortSelection(node, []);
-                    }
-                    angular.element(event.target).removeClass('chart-container-hover');
+                        var existingStudy = CohortSelectionService.getBox(vm.boxId).studyId;
+                        AlertService.add('danger',
+                            'Cannot mix the study ' + node.study.id + ' with the existing study ' + existingStudy);
 
+                    }
+
+                    angular.element(event.target).removeClass('chart-container-hover');
                     vm.addHistory('onNodeDrop', [event, info, node]);
 
                     return promise;
