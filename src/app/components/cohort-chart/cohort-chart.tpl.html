@@ -3,7 +3,7 @@
 
     <div class="panel-heading chart-drag-handle">
         <section class="ts-study-title-container">
-            <span class="ts-study-title">{{title}}</span>
+            <span class="ts-study-title">{{title | cutString:cutOff:'...'}}</span>
         </section>
 
         <i class="glyphicon glyphicon-remove pull-right ts-icon ts-remove-chart"
