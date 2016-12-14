@@ -399,6 +399,7 @@ describe('CohortSelectionCtrl', function () {
         var childNode = {};
 
         beforeEach(function () {
+            node.name = 'a-node';
             node.restObj = Restangular;
             node.restObj._links = {
                 children: undefined
@@ -408,9 +409,11 @@ describe('CohortSelectionCtrl', function () {
                 value: ''
             }];
 
+            childNode.name = 'a-child-node';
             childNode.observations = [{
                 value: ''
             }];
+            childNode.nodes = [];
 
         });
 
@@ -457,20 +460,25 @@ describe('CohortSelectionCtrl', function () {
             expect(node.observations.forEach).toHaveBeenCalled();
         });
 
-        it('should iterate over child nodes, call addNode, and iterate over child observations ' +
+        it('should iterate over child nodes, and call addNodeToActiveCohortSelection ' +
             'when node.nodes is non-empty and has no categorical leaf child node', function () {
             node.nodes = [childNode];
             TreeNodeService.isCategoricalLeafNode = function (_node) {
                 return false;
             };
+            spyOn(TreeNodeService, 'getNodeChildren').and.callFake(function () {
+                return {
+                    then: function () {
+                    }
+                }
+            });
 
             spyOn(node.nodes, 'forEach').and.callThrough();
-            spyOn(ctrl, 'addNode');
-            spyOn(childNode.observations, 'forEach');
+            spyOn(ctrl, 'addNodeToActiveCohortSelection').and.callThrough();
             ctrl.addNodeToActiveCohortSelection(node, []);
             expect(node.nodes.forEach).toHaveBeenCalled();
-            expect(ctrl.addNode).toHaveBeenCalledWith(childNode);
-            expect(childNode.observations.forEach).toHaveBeenCalled();
+            expect(ctrl.addNodeToActiveCohortSelection).toHaveBeenCalled();
+            expect(TreeNodeService.getNodeChildren).toHaveBeenCalled();
         });
 
         it('should accept combination node', function () {
