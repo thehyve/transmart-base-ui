@@ -503,7 +503,8 @@ angular.module('transmartBaseUi')
                         }
                     } else {
                         // if label already exists check its type
-                        label.type = label.type === 'float' ? label.type : CohortSelectionService.getLabelType(obs.value);
+                        label.type =
+                            label.type === 'float' ? label.type : CohortSelectionService.getLabelType(obs.value);
                     }
 
                     if (label && label.type === 'float') {
@@ -870,7 +871,8 @@ angular.module('transmartBaseUi')
                         var lbl = _missingLabelId || undefined;
                         vm.cs.dimensions[label.labelId] =
                             vm.cs.crossfilter.dimension(function (d) {
-                                return d.observations[label.conceptPath] === undefined ? lbl : d.observations[label.conceptPath];
+                                return d.observations[label.conceptPath] === undefined ?
+                                    lbl : d.observations[label.conceptPath];
                             });
                         vm.cs.groups[label.labelId] =
                             vm.cs.dimensions[label.labelId].group();
@@ -896,7 +898,8 @@ angular.module('transmartBaseUi')
                         } else if (label.type === 'number') {
                             _defaultDim(Infinity);
                             var group = vm.cs.dimensions[label.labelId].group();
-                            // Filter out all records that do not have a value (which are set to Infinity in the dimension)
+                            // Filter out all records that do not have a value
+                            // (which are set to Infinity in the dimension)
                             // To do this, we clone the group (we want to keep the methods) and override all().
                             var filteredGroup = {};
                             angular.copy(group, filteredGroup);
@@ -1002,8 +1005,8 @@ angular.module('transmartBaseUi')
                         node.label = undefined; // clear existing label
 
                         if (TreeNodeService.isCategoricalLeafNode(node)) { //leaf node for pie chart
-                            var chart =
-                                CohortSelectionService.findChartByConceptPath(node.parent.restObj.fullName, vm.cs.charts);
+                            var conceptPath = node.parent.restObj.fullName;
+                            var chart = CohortSelectionService.findChartByConceptPath(conceptPath, vm.cs.charts);
                             if (chart == null) {
                                 var filters = [{
                                     label: node.parent.restObj.fullName,
