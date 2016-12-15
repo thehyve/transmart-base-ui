@@ -29,6 +29,7 @@ angular.module('transmartBaseUi')
                 service.currentBoxId = boxId;
                 boxObj = {
                     boxId: boxId,
+                    studyId: undefined,
                     //default ng-model value for the checkbox in cohort grid
                     checked: true
                 };
@@ -169,6 +170,29 @@ angular.module('transmartBaseUi')
                 }
             }
             return _type;
+        };
+
+
+        /**
+         * Check if a given node's study is the same as the one in the box,
+         * if yes, return false, else return true
+         * @param node
+         * @param boxId
+         * @returns {boolean}
+         */
+        service.isNodeStudyConflict = function (node, boxId) {
+            var isConflict = false;
+            var nodeStudyId = node.study.id;
+            var box = service.getBox(boxId);
+            if(nodeStudyId && box) {
+                if(!box.studyId) {
+                    box.studyId = nodeStudyId;
+                }
+                else if(nodeStudyId !== box.studyId) {
+                    isConflict = true;
+                }
+            }
+            return isConflict;
         };
 
         return service;

@@ -96,7 +96,7 @@ describe('CohortSelectionCtrl', function () {
             };
             var filterFunc = function (filters) {
                 return filters;
-            }
+            };
             ctrl.cs.charts = [
                 {id: 2, filter: filterFunc}
             ];
@@ -171,6 +171,9 @@ describe('CohortSelectionCtrl', function () {
         beforeEach(function () {
             pieNode.type = 'CATEGORICAL_OPTION';
             pieNode.parent = node;
+            pieNode.study = {
+                id: 'a-study'
+            };
 
             node.type = '';
             node.restObj = {};
@@ -188,7 +191,11 @@ describe('CohortSelectionCtrl', function () {
 
             spyOn(ctrl, 'onNodeDrop').and.callThrough();
             spyOn(ctrl, 'addNodeToActiveCohortSelection');
+            spyOn(CohortSelectionService, 'isNodeStudyConflict').and.callFake(function () {
+                return false;
+            });
             ctrl.onNodeDrop(event, info, pieNode);
+            expect(CohortSelectionService.isNodeStudyConflict).toHaveBeenCalled();
             expect(ctrl.onNodeDrop).toHaveBeenCalledWith(event, info, pieNode);
             expect(ctrl.addNodeToActiveCohortSelection).toHaveBeenCalledWith(node, filters);
         });
@@ -214,8 +221,12 @@ describe('CohortSelectionCtrl', function () {
         it('should invoke addNodeToActiveCohortSelection with node when the node is dropped', function () {
             spyOn(ctrl, 'onNodeDrop').and.callThrough();
             spyOn(ctrl, 'addNodeToActiveCohortSelection');
+            spyOn(CohortSelectionService, 'isNodeStudyConflict').and.callFake(function () {
+                return false;
+            });
 
             ctrl.onNodeDrop(event, info, node);
+            expect(CohortSelectionService.isNodeStudyConflict).toHaveBeenCalled();
             expect(ctrl.onNodeDrop).toHaveBeenCalledWith(event, info, node);
             expect(ctrl.addNodeToActiveCohortSelection).toHaveBeenCalled();
         });
@@ -229,6 +240,21 @@ describe('CohortSelectionCtrl', function () {
             ctrl.onNodeDrop(dropEvent, {}, nodes);
             expect(ctrl.onNodeDrop).toHaveBeenCalledWith(dropEvent, {}, nodes);
             expect(!angular.element(dropEvent.target).hasClass('chart-container-hover'));
+        });
+
+        it('should alert the user when different studies get mixed', function () {
+            spyOn(CohortSelectionService, 'isNodeStudyConflict').and.callFake(function () {
+                return true;
+            });
+            spyOn(CohortSelectionService, 'getBox').and.callFake(function () {
+                return {studyId: ''};
+            });
+            spyOn(AlertService, 'add');
+            ctrl.onNodeDrop({}, '', pieNode);
+            expect(CohortSelectionService.isNodeStudyConflict).toHaveBeenCalled();
+            expect(CohortSelectionService.getBox).toHaveBeenCalled();
+            expect(AlertService.add).toHaveBeenCalled();
+
         });
     });
 
@@ -419,7 +445,7 @@ describe('CohortSelectionCtrl', function () {
             'node.nodes is non-empty and has categorical leaf child nodes', function () {
             node.nodes = [{
                 id: 'aNode'
-            }]
+            }];
             TreeNodeService.isCategoricalLeafNode = function (_node) {
                 return true;
             };
@@ -960,6 +986,10 @@ describe('CohortSelectionCtrl', function () {
             el = document.createElement('div');
             ctrl.reset();
 
+            spyOn(CohortSelectionService, 'isNodeStudyConflict').and.callFake(function () {
+                return false;
+            });
+
             genderNode = CohortSelectionMocks.getGenderNode();
             genderLabel = _.clone(genderNode.label);
             ctrl.cs.labels.push(genderLabel);
@@ -1074,6 +1104,9 @@ describe('CohortSelectionCtrl', function () {
     describe('getCohortFilters', function () {
 
         it('should get the cohort filters based on existing charts', function () {
+            spyOn(CohortSelectionService, 'isNodeStudyConflict').and.callFake(function () {
+                return false;
+            });
             ctrl.reset();
             var el = document.createElement('div');
             var genderNode = CohortSelectionMocks.getGenderNode();
@@ -1084,6 +1117,7 @@ describe('CohortSelectionCtrl', function () {
             ctrl.createCohortChart(genderLabel, el);
             var filters = ctrl.getCohortFilters();
             expect(filters.length).toBe(1);
+            expect(CohortSelectionService.isNodeStudyConflict).toHaveBeenCalled();
         });
     });
 
@@ -1111,6 +1145,9 @@ describe('CohortSelectionCtrl', function () {
         var chart1, chart2;
 
         beforeEach(function () {
+            spyOn(CohortSelectionService, 'isNodeStudyConflict').and.callFake(function () {
+                return false;
+            });
             var el = document.createElement('div');
             var genderNode = CohortSelectionMocks.getGenderNode();
             var genderLabel = _.clone(genderNode.label);
@@ -1126,6 +1163,7 @@ describe('CohortSelectionCtrl', function () {
 
             chart1 = ctrl.cs.charts[0];
             chart2 = ctrl.cs.charts[1];
+            expect(CohortSelectionService.isNodeStudyConflict).toHaveBeenCalled();
         });
 
         it('should call combineCharts when filterObj is undefined', function () {
@@ -1143,6 +1181,9 @@ describe('CohortSelectionCtrl', function () {
     describe('groupCharts', function () {
 
         beforeEach(function () {
+            spyOn(CohortSelectionService, 'isNodeStudyConflict').and.callFake(function () {
+                return false;
+            });
             var el = document.createElement('div');
             var genderNode = CohortSelectionMocks.getGenderNode();
             var genderLabel = _.clone(genderNode.label);
@@ -1155,6 +1196,7 @@ describe('CohortSelectionCtrl', function () {
             ctrl.cs.labels.push(ageLabel);
             ctrl.onNodeDrop({}, {}, ageNode);
             ctrl.createCohortChart(ageLabel, el);
+            expect(CohortSelectionService.isNodeStudyConflict).toHaveBeenCalled();
         });
 
         it('should call perform chart grouping when ctrl.currentChartGrouping is {}', function () {
@@ -1186,7 +1228,7 @@ describe('CohortSelectionCtrl', function () {
         });
 
         it('should give alert when the number of labels exceeds max', function () {
-            _.times(ctrl.cs.maxNoOfDimensions+1, function () {
+            _.times(ctrl.cs.maxNoOfDimensions + 1, function () {
                 ctrl.cs.labels.push(ageNode.label);
             });
             ctrl.addLabel(genderNode.observations[0], genderNode, {});
@@ -1213,7 +1255,7 @@ describe('CohortSelectionCtrl', function () {
                 canvas: canvas,
                 imageType: imgType
             };
-            for(var i=0; i<ctrl.cs.charts.length; i++) {
+            for (var i = 0; i < ctrl.cs.charts.length; i++) {
                 scope.$emit('canvasImageLoadedEvent', args);
             }
             expect(canvas.toBlob).toHaveBeenCalled();
@@ -1235,7 +1277,7 @@ describe('CohortSelectionCtrl', function () {
                 canvas: canvas,
                 imageType: imgType
             };
-            for(var i=0; i<ctrl.cs.charts.length; i++) {
+            for (var i = 0; i < ctrl.cs.charts.length; i++) {
                 scope.$emit('canvasImageLoadedEvent', args);
             }
             expect(canvas.toDataURL).toHaveBeenCalled();
