@@ -26,12 +26,6 @@ exports.config = {
     specs: [paths.e2e + '/features/**/*.feature'],
 
     cucumberOpts: {
-        require: paths.e2e + '/steps/**/*.js'
-    },
-
-//    // Options to be passed to Jasmine-node.
-//    jasmineNodeOpts: {
-//        showColors: true,
-//        defaultTimeoutInterval: 30000
-//    }
+        require: [paths.e2e + '/steps/**/*.js', require('protractor-cucumber-pages').steps]
+    }
 };

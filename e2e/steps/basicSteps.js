@@ -1,12 +1,9 @@
 'use strict';
-var actor = require('../core/core')
+var actor = require('protractor-cucumber-pages').core
+actor.setSearchDir(__dirname + '/..')
 
 module.exports = function() {
     this.setDefaultTimeout(60 * 1000); //max time before callback
-
-    this.Given(/^I open the (.*) page$/, function (pageName, callback) {
-         actor.goToPage(pageName).then(callback, callback)
-    });
 
     //this should probably be replaced by doing a rest call and setting a coocky
     this.When(/^I login with (.*)$/, function (userName, callback) {
@@ -21,9 +18,5 @@ module.exports = function() {
         actor.waitForPage('oauth').then(
         actor.page.authorizeButton.click().then(
         callback, callback), callback)
-    });
-
-    this.Then(/^I am at the (.*) page$/, function (pageName, callback) {
-        actor.at(pageName).then(callback, callback)
     });
 };
