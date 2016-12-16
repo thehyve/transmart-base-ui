@@ -9,6 +9,7 @@
     "report-coverage": "codecov"
   },
   "devDependencies": {
+    "protractor-cucumber-pages": "~0.0.1",
     "angular-jsdoc": "^1.4.2",
     "browser-sync": "~2.12.5",
     "browser-sync-spa": "~1.0.3",
