@@ -366,6 +366,8 @@ angular.module('transmartBaseUi')
                 vm.clearSelection = function () {
                     vm.reset();
                     vm.updateDimensions();
+                    var box = CohortSelectionService.getBox(vm.boxId);
+                    box.studyId = undefined;
                 };
 
                 /**

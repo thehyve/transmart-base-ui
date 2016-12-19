@@ -120,12 +120,20 @@ describe('CohortSelectionCtrl', function () {
 
     describe('clearSelection', function () {
         it('should be able to clear the current cohort selection', function () {
+            var box = {
+                studyId: 'an-id'
+            };
             spyOn(ctrl, 'reset');
             spyOn(ctrl, 'updateDimensions');
+            spyOn(CohortSelectionService, 'getBox').and.callFake(function () {
+                return box;
+            });
 
             ctrl.clearSelection();
             expect(ctrl.reset).toHaveBeenCalled();
             expect(ctrl.updateDimensions).toHaveBeenCalled();
+            expect(CohortSelectionService.getBox).toHaveBeenCalled();
+            expect(box.studyId).toBe(undefined);
         });
     });
 

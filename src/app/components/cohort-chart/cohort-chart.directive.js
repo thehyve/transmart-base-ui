@@ -94,7 +94,7 @@ angular.module('transmartBaseUi')
                         }
                         // Number of characters after which the title string will be cut off
                         // 10 pixels per characters is assumed
-                        scope.cutOff = _chart.gridInfo.sizeX * (_chart.gridInfo.curColWidth - 30) / 10;
+                        scope.cutOff = _chart.gridInfo.sizeX * (_chart.gridInfo.curColWidth - 50) / 10;
                         DcChartsService.resizeChart(_chart);
                     });
 
