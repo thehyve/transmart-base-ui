@@ -7,71 +7,78 @@
  * @name ResourceInterceptors
  */
 angular.module('tmEndpoints')
-    .factory('ResourceInterceptors', ['AlertService', function (AlertService) {
+    .factory('ResourceInterceptors', ['AlertService', 'EndpointService', '$state',
+        function (AlertService, EndpointService, $state) {
 
-        var service = {};
+            var service = {};
 
-        /**
-         * Intercept response to change 'concepts' to 'ontology_terms'
-         * @memberof ResourceInterceptors
-         * @param data {object} - The data received got from the server
-         * @param operation {string} - The operation made. It'll be the HTTP method used except for a GET which
-         * returns a list of element which will return getList so that you can distinguish them.
-         * @param what {string} - The model that's being requested.
-         * @returns {object} data
-         */
-        service.customResponseInterceptor = function (data, operation, what) {
+            /**
+             * Intercept response to change 'concepts' to 'ontology_terms'
+             * @memberof ResourceInterceptors
+             * @param data {object} - The data received got from the server
+             * @param operation {string} - The operation made. It'll be the HTTP method used except for a GET which
+             * returns a list of element which will return getList so that you can distinguish them.
+             * @param what {string} - The model that's being requested.
+             * @returns {object} data
+             */
+            service.customResponseInterceptor = function (data, operation, what) {
 
-            var _getLastToken = function (what) {
-                var _t = what.split('/').slice(1);
-                return what.indexOf('/') === -1 ? what : _t[_t.length - 1];
+                var _getLastToken = function (what) {
+                    var _t = what.split('/').slice(1);
+                    return what.indexOf('/') === -1 ? what : _t[_t.length - 1];
+                };
+
+                if (operation === 'getList') {
+                    var _what, resp;
+                    if (what === 'concepts') {
+                        _what = 'ontology_terms';
+                    } else if (what === 'patient_sets') {
+                        _what = 'subjects';
+                    } else {
+                        _what = _getLastToken(what);
+                    }
+                    resp = data._embedded[_what];
+                    return resp;
+                }
+
+                return data;
             };
 
-            if (operation === 'getList') {
-                var _what, resp;
-                if (what === 'concepts') {
-                    _what = 'ontology_terms';
-                } else if (what === 'patient_sets') {
-                    _what = 'subjects';
-                } else {
-                    _what = _getLastToken(what);
+            /**
+             * Handle common HTTP Errors
+             * @param response
+             * @returns {boolean} - true if error not handled, false if it is\
+             * @memberof ResourceInterceptors
+             */
+            service.customErrorInterceptor = function (response) {
+
+                if (response.status === 401) {
+                    AlertService.add('danger', 'HTTP ' + response.status
+                        + ': Unauthorized request.');
+
+                    // When the token is expired,
+                    // log the user out and go back to home page
+                    EndpointService.logout();
+                    $state.go('home');
                 }
-                resp = data._embedded[_what];
-                return resp;
-            }
 
-            return data;
-        };
+                if (response.status === 404) {
+                    AlertService.add('danger', 'HTTP ' + response.status
+                        + ': The resource that you are trying to access was moved or does not exist.');
+                }
 
-        /**
-         * Handle common HTTP Errors
-         * @param response
-         * @returns {boolean} - true if error not handled, false if it is
-         */
-        service.customErrorInterceptor = function(response) {
+                if (response.status === 403) {
+                    AlertService.add('danger', 'HTTP ' + response.status
+                        + ': Forbidden request.');
+                }
 
-            if (response.status === 401) {
-                AlertService.add('danger', 'HTTP ' + response.status
-                    + ': Unauthorized request.');
-            }
+                if (response.status === 500) {
+                    AlertService.add('danger', 'HTTP ' + response.status
+                        + ': Internal server error.');
+                }
 
-            if (response.status === 404) {
-                AlertService.add('danger', 'HTTP ' + response.status
-                    + ': The resource that you are trying to access was moved or does not exist.');
-            }
+                return true; // error not handled
+            };
 
-            if (response.status === 403) {
-                AlertService.add('danger', 'HTTP ' + response.status
-                    + ': Forbidden request.');
-            }
-
-            if (response.status === 500) {
-                AlertService.add('danger', 'HTTP ' + response.status
-                    + ': Internal server error.');
-            }
-
-            return true; // error not handled
-        };
-
-        return service;
-    }]);
+            return service;
+        }]);
