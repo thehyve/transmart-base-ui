@@ -143,22 +143,6 @@ angular.module('transmartBaseUi')
 
             /**
              * @memberof CohortSelectionService
-             * @param path - conceptPath
-             * @param nodes - the array of nodes in ctrl.cs.nodes
-             * @returns {Object} - the found node
-             */
-            service.findNodeByConceptPath = function (path, nodes) {
-                var foundNode = undefined;
-                nodes.forEach(function (node) {
-                    if (node.label.conceptPath === path) {
-                        foundNode = node;
-                    }
-                });
-                return foundNode;
-            };
-
-            /**
-             * @memberof CohortSelectionService
              * @param value
              * @returns {string} - The type of label
              */
