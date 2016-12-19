@@ -43,6 +43,13 @@ describe('Unit testing cohort-chart directive', function () {
             boxId: boxId
         };
 
+        var box = {
+            studyId: 'an-id'
+        };
+        spyOn(CohortSelectionService, 'getBox').and.callFake(function () {
+            return box;
+        });
+
         var ctrlElm = angular.element('<div id=' + boxId + '></div>');
         ctrl = $controller('CohortSelectionCtrl', {$scope: scope, $element: ctrlElm});
         CohortSelectionService.getBox = function (boxId) {

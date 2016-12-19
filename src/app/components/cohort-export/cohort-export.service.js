@@ -220,7 +220,7 @@ angular.module('transmartBaseUi')
                 context.clearRect(0, 0, width, height);
                 context.drawImage(image, 0, 0, width, height);
                 canvas.toBlob(function (dataBlob) {
-                    saveAs(dataBlob, chartTitle)
+                    saveAs(dataBlob, chartTitle + '.png')
                 });
             };
 
