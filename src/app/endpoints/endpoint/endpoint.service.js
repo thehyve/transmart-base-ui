@@ -8,18 +8,18 @@
  */
 angular.module('tmEndpoints')
     .factory('EndpointService',
-        ['$rootScope', '$http', '$q', 'ResourceService', '$cookies', '$window', '$location',
+        ['$rootScope', '$http', '$q', 'Restangular', 'ResourceService', '$cookies', '$window', '$location',
             'MASTER_ENDPOINT_CONFIG', 'IS_TESTING',
-            function ($rootScope, $http, $q, ResourceService, $cookies, $window, $location,
+            function ($rootScope, $http, $q, Restangular, ResourceService, $cookies, $window, $location,
                       MASTER_ENDPOINT_CONFIG, IS_TESTING) {
 
                 var service = {};
 
                 // Contains all the endpoints currently connected to
-                var endpoints = [];
+                service.endpoints = [];
 
                 // Holds the endpoint which to save user specific settings to
-                var masterEndpoint = null;
+                service.masterEndpoint = null;
 
                 var cookieKeyForEndpoints = 'transmart-base-ui-v2.endpoints';
                 var cookieKeyForSelectedEndpoint = 'transmart-base-ui-v2.selectedEndpoint';
@@ -65,7 +65,7 @@ angular.module('tmEndpoints')
                  * @returns {Array}
                  */
                 service.getEndpoints = function () {
-                    return endpoints;
+                    return service.endpoints;
                 };
 
                 /**
@@ -74,9 +74,9 @@ angular.module('tmEndpoints')
                  * @param endpoint
                  */
                 service.addEndpoint = function (endpoint) {
-                    endpoints.push(endpoint);
+                    service.endpoints.push(endpoint);
                     if (endpoint.isMaster) {
-                        masterEndpoint = endpoint;
+                        service.masterEndpoint = endpoint;
                     }
                     service.saveEndpoint(endpoint);
                 };
@@ -87,13 +87,13 @@ angular.module('tmEndpoints')
                  * @param endpoint
                  */
                 service.removeEndpoint = function (endpoint) {
-                    var _in = endpoints.indexOf(endpoint);
+                    var _in = service.endpoints.indexOf(endpoint);
                     if (_in >= 0) {
-                        endpoints.splice(_in, 1);
+                        service.endpoints.splice(_in, 1);
                     }
 
                     // Remove nested restangular object
-                    var _end = _.map(endpoints, function (e) {
+                    var _end = _.map(service.endpoints, function (e) {
                         var _n = _.clone(e);
                         _n.restangular = undefined;
                         return _n;
@@ -130,9 +130,9 @@ angular.module('tmEndpoints')
                     var storedEndpoints = $cookies.getObject(strCookieKey) || [];
                     storedEndpoints.forEach(function (endpoint) {
                         endpoint.restangular = ResourceService.createResourceServiceByEndpoint(endpoint);
-                        endpoints.push(endpoint);
+                        service.endpoints.push(endpoint);
                         if (endpoint.isMaster) {
-                            masterEndpoint = endpoint;
+                            service.masterEndpoint = endpoint;
                         }
                     });
                     return storedEndpoints;
@@ -144,8 +144,8 @@ angular.module('tmEndpoints')
                  */
                 service.clearStoredEndpoints = function () {
                     $cookies.remove(cookieKeyForEndpoints);
-                    endpoints = [];
-                    masterEndpoint = null;
+                    service.endpoints = [];
+                    service.masterEndpoint = null;
                     service.initializeMasterEndpoint();
                 };
 
@@ -159,8 +159,8 @@ angular.module('tmEndpoints')
                     $cookies.remove(cookieKeyForSelectedEndpoint);
                     $cookies.remove('JSESSIONID');
 
-                    endpoints = [];
-                    masterEndpoint = null;
+                    service.endpoints = [];
+                    service.masterEndpoint = null;
                     service.loggedIn = false;
                 };
 
@@ -225,9 +225,9 @@ angular.module('tmEndpoints')
                  * @param endpoint
                  */
                 service.initializeMasterEndpoint = function () {
-                    if (!masterEndpoint) {
-                        masterEndpoint = MASTER_ENDPOINT_CONFIG;
-                        service.authorizeEndpoint(masterEndpoint);
+                    if (!service.masterEndpoint) {
+                        service.masterEndpoint = MASTER_ENDPOINT_CONFIG;
+                        service.authorizeEndpoint(service.masterEndpoint);
                     }
                 };
 
@@ -237,7 +237,7 @@ angular.module('tmEndpoints')
                  * @returns {*}
                  */
                 service.getMasterEndpoint = function () {
-                    return masterEndpoint;
+                    return service.masterEndpoint;
                 };
 
                 /**
@@ -312,6 +312,7 @@ angular.module('tmEndpoints')
                     service.removeEndpoint(endpoint);
                     service.authorizeEndpoint(endpoint);
                 };
+
 
                 return service;
             }
