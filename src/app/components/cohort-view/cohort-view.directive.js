@@ -22,9 +22,9 @@ angular.module('transmartBaseUi')
      * @ngdoc controller
      * @name cohortView
      */
-    .controller('CohortViewCtrl', ['$scope', '$timeout', '$q', 'CohortViewService',
+    .controller('CohortViewCtrl', ['$scope', '$timeout', '$q', '$uibModal', 'CohortViewService',
             'AlertService', 'CohortSelectionService', 'QueryParserService', 'ContentService', '$state',
-            function ($scope, $timeout, $q, CohortViewService, AlertService,
+            function ($scope, $timeout, $q, $uibModal, CohortViewService, AlertService,
                       CohortSelectionService, QueryParserService, ContentService, $state) {
 
                 $scope.cohorts = [];
@@ -100,31 +100,52 @@ angular.module('transmartBaseUi')
                 };
 
                 /**
-                 * Loads the specified cohort by parsing the query and adding the
-                 * nodes and filters to the cohort selection workspace.
-                 */
-                ctrl.loadCohort = function (cohort) {
-
-                    // Get the controller for the selected workspace
-                    var cohortSelectionCtrl = CohortSelectionService.boxes[0].ctrl;
-
-                    // Parse query XML
-                    QueryParserService.convertCohortFiltersFromXML(cohort.queryXML, cohortSelectionCtrl);
-                };
-
-                /**
                  * Loads the cohorts currently selected in the list.
                  */
                 ctrl.loadSelectedCohorts = function () {
                     var selectedCohorts = ctrl.gridApi.selection.getSelectedRows();
 
-                    // Remove all selected cohorts and reload the list after completing
-                    selectedCohorts.forEach(function (cohort) {
-                        ctrl.loadCohort(cohort);
-                    });
-
-                    // automatically switch to cohort selection tab
-                    ContentService.activateTab(ContentService.tabs[0].title, 'cohortSelection');
+                    var emptyBox = CohortSelectionService.findEmptyBox();
+                    /*
+                     * Condition 1. when there is an empty box, load the selected cohorts there
+                     */
+                    if (emptyBox) {
+                        CohortSelectionService.loadCohorts(selectedCohorts, emptyBox);
+                    }
+                    /*
+                     * Condition 2. when there is no empty box
+                     */
+                    else {
+                        /*
+                         * Condition 2.1. when a second empty box can be created
+                         */
+                        if (CohortSelectionService.boxes.length == 1) {
+                            //create the second empty box, along with the corresponding workspace panel
+                            var newEmptyBox = CohortSelectionService.addBox();
+                            newEmptyBox.deferred.promise.then(function (success) {
+                                CohortSelectionService.loadCohorts(selectedCohorts, newEmptyBox);
+                            }, function (error) {
+                                AlertService.add('danger', 'New workspace cannot be created. Error: ' + error);
+                            });
+                        }
+                        /*
+                         * Condition 2.2. when both boxes are occupied
+                         */
+                        else {
+                            $uibModal.open({
+                                templateUrl: 'app/components/load-cohort/load-cohort-dialog.tpl.html',
+                                controller: 'LoadCohortDialogCtrl as vm',
+                                animation: false,
+                                resolve: {
+                                    param: function () {
+                                        return {
+                                            selectedCohorts: selectedCohorts
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
                 };
 
                 // Initialize the list

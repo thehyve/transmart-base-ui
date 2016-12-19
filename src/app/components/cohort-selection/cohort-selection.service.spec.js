@@ -1,14 +1,16 @@
 'use strict'
 
 describe('CohortSelectionService', function () {
-    var CohortSelectionService;
+    var CohortSelectionService, QueryParserService, ContentService;
 
     beforeEach(function () {
         module('transmartBaseUi');
     });
 
-    beforeEach(inject(function (_CohortSelectionService_) {
-        CohortSelectionService = _CohortSelectionService_
+    beforeEach(inject(function (_CohortSelectionService_, _QueryParserService_, _ContentService_) {
+        CohortSelectionService = _CohortSelectionService_;
+        QueryParserService = _QueryParserService_;
+        ContentService = _ContentService_;
     }));
 
     describe('addBox', function () {
@@ -91,23 +93,6 @@ describe('CohortSelectionService', function () {
 
     });
 
-    describe('findNodeByConceptPath', function () {
-        var path = 'a/path';
-        var node = {
-            label: {
-                conceptPath: path
-            }
-        };
-        it('should find the node if the correct path is provided', function () {
-            var foundNode = CohortSelectionService.findNodeByConceptPath(path, [node]);
-            expect(foundNode).toBe(node);
-        });
-        it('should not find the node if the path is incorrect', function () {
-            var foundNode = CohortSelectionService.findNodeByConceptPath(path + '-', [node]);
-            expect(foundNode).not.toBe(node);
-        });
-    });
-
     describe('duplicateBox', function () {
         var box;
         beforeEach(function () {
@@ -166,6 +151,51 @@ describe('CohortSelectionService', function () {
             val = 'MRNA';
             type = CohortSelectionService.getLabelType(val);
             expect(type).toBe('highdim');
+        });
+    });
+
+    describe('findEmptyBox', function () {
+        it('should find empty box if there is one', function () {
+            var emptyBox = {
+                ctrl: {
+                    cs: {
+                        charts: []
+                    }
+                }
+            };
+
+            CohortSelectionService.boxes.push(emptyBox);
+            var foundBox = CohortSelectionService.findEmptyBox();
+            expect(foundBox).toBe(foundBox);
+        });
+
+        it('should return undefined when there is no empty box', function () {
+            var nonEmptyBox = {
+                ctrl: {
+                    cs: {
+                        charts: [{}]
+                    }
+                }
+            };
+            CohortSelectionService.boxes.push(nonEmptyBox);
+            var foundBox = CohortSelectionService.findEmptyBox();
+            expect(foundBox).toBe(undefined);
+        });
+
+        it('should return undefined when there is no box', function () {
+            var foundBox = CohortSelectionService.findEmptyBox();
+            expect(foundBox).toBe(undefined);
+        });
+    });
+
+    describe('loadCohorts', function () {
+        it('should load cohorts by calling QueryParserService and switching tab', function () {
+            var cohorts = [{}];
+            spyOn(QueryParserService, 'convertCohortFiltersFromXML');
+            spyOn(ContentService, 'activateTab');
+            CohortSelectionService.loadCohorts(cohorts, {});
+            expect(QueryParserService.convertCohortFiltersFromXML).toHaveBeenCalled();
+            expect(ContentService.activateTab).toHaveBeenCalled();
         });
     });
 

@@ -596,8 +596,7 @@ angular.module('transmartBaseUi')
                                 }
                                 else {
                                     node.nodes.forEach(function (child) {
-                                        vm.addNode(child);
-                                        _loadObservations(child, filters);
+                                        vm.addNodeToActiveCohortSelection(child, filters);
                                     });
                                 }
                             });
@@ -608,8 +607,7 @@ angular.module('transmartBaseUi')
                         }
                         else {
                             node.nodes.forEach(function (child) {
-                                vm.addNode(child);
-                                _loadObservations(child, filters);
+                                vm.addNodeToActiveCohortSelection(child, filters);
                             });
                         }
                     }

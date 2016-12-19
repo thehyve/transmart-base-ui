@@ -25,6 +25,7 @@ angular.module('transmartBaseUi')
                 box.ctrl.boxId = box.boxId;
                 box.ctrl.mainContainerId =
                     CohortSelectionService.setElementAttrs(element, box.boxId);
+                box.deferred.resolve('Cohort-selection Controller has been established.');
 
                 /*
                  * Two ways to duplicate a cohort-selection box

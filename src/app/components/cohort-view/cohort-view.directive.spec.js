@@ -62,14 +62,4 @@ describe('CohortView and CohortViewCtrl', function () {
         expect(element.html()).toContain('ui-grid');
     });
 
-    it('should load the specified cohort', function() {
-        spyOn(QueryParserService, 'convertCohortFiltersFromXML');
-
-        var cohort = cohorts[0];
-        ctrl.loadCohort(cohort);
-
-        expect(QueryParserService.convertCohortFiltersFromXML).toHaveBeenCalledWith(
-            cohort.queryXML, selectionController);
-    })
-
 });
