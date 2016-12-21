@@ -100,6 +100,9 @@ angular.module('transmartBaseUi')
                         return d.id;
                     });
                     vm.history = [];
+
+                    var box = CohortSelectionService.getBox(vm.boxId);
+                    if(box) box.studyId = undefined;
                 };
 
                 /**

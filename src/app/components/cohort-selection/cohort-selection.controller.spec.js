@@ -26,11 +26,17 @@ describe('CohortSelectionCtrl', function () {
         scope.labels = CohortChartMocks.getMockLabels();
         scope.label = scope.labels[0];
 
+        var box = {
+            studyId: 'an-id'
+        };
+        spyOn(CohortSelectionService, 'getBox').and.callFake(function () {
+            return box;
+        });
+
         ctrlElm = angular.element('<div></div>');
         ctrl = $controller('CohortSelectionCtrl', {$scope: scope, $element: ctrlElm});
         spyOn(AlertService, 'get');
         scope.$digest();
-
     }));
 
     describe('Initialization of controller', function () {
@@ -245,9 +251,6 @@ describe('CohortSelectionCtrl', function () {
         it('should alert the user when different studies get mixed', function () {
             spyOn(CohortSelectionService, 'isNodeStudyConflict').and.callFake(function () {
                 return true;
-            });
-            spyOn(CohortSelectionService, 'getBox').and.callFake(function () {
-                return {studyId: ''};
             });
             spyOn(AlertService, 'add');
             ctrl.onNodeDrop({}, '', pieNode);
