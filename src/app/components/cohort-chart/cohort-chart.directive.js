@@ -83,8 +83,10 @@ angular.module('transmartBaseUi')
                         };
 
                         if (!_.isEqual(newValues, oldValues)) {
-                            var _node = CohortSelectionService.findNodeByConceptPath
-                            (_chart.tsLabel.conceptPath, cohortSelectionCtrl.cs.nodes);
+                            var _node = _.find(cohortSelectionCtrl.cs.nodes, {
+                                conceptPath: _chart.tsLabel.conceptPath
+                            });
+
                             if (_node) {
                                 _node.label.sizeX = _chart.gridInfo.sizeX;
                                 _node.label.sizeY = _chart.gridInfo.sizeY;

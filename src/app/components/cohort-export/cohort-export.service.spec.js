@@ -69,11 +69,13 @@ describe('CohortExportService', function () {
         it('should check node children and insert css', function () {
             spyOn(elm, 'hasChildNodes').and.callThrough();
             spyOn(elm, 'insertBefore').and.callThrough();
+            spyOn(elm, 'removeChild');
             spyOn(elm, 'querySelectorAll').and.callThrough();
             CohortExportService.getSVGString(label);
             expect(elm.hasChildNodes).toHaveBeenCalled();
             expect(elm.insertBefore).toHaveBeenCalled();
             expect(elm.querySelectorAll).toHaveBeenCalled();
+            expect(elm.removeChild).toHaveBeenCalled();
         });
 
         it('should also work when elm has no child node', function () {
