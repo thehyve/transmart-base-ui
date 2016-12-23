@@ -70,7 +70,7 @@
   },
   "resolutions": {
     "jquery": "~2.2",
-    "angular": "1.6.0",
+    "angular": "1.6.1",
     "d3": "3.5.17"
   }
 }
