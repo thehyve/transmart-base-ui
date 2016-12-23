@@ -34,7 +34,6 @@ angular.module('transmartBaseUi')
                         //the deferred object signals resolution when the
                         //corresponding cohort-selection.directive is ready
                         deferred: deferred,
-                        studyId: undefined,
                         //default ng-model value for the checkbox in cohort grid
                         checked: true
                     };

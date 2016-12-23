@@ -172,7 +172,6 @@ angular.module('transmartBaseUi')
             service.getChartSize = function (label) {
                 var charts = CohortSelectionService.getBox(label.boxId).ctrl.cs.charts;
                 var chart = _.find(charts, {id: label.labelId});
-
                 if (chart) {
                     return {
                         width: chart.width(),
@@ -221,7 +220,7 @@ angular.module('transmartBaseUi')
                 context.clearRect(0, 0, width, height);
                 context.drawImage(image, 0, 0, width, height);
                 canvas.toBlob(function (dataBlob) {
-                    saveAs(dataBlob, chartTitle + '.png')
+                    saveAs(dataBlob, chartTitle)
                 });
             };
 
@@ -294,38 +293,50 @@ angular.module('transmartBaseUi')
                     var ctrl = box.ctrl,
                         cs = ctrl.cs,
                         labels = cs.cohortLabels,
-                        scale = 10,
+                        genericSize = 1000,
                         gap = 100,
                         width = gap,
                         height = gap,
                         sizes = {};
 
-                    var w = 0, h = 0;
-                    labels.forEach(function (label) {
-                        var _chartSize = service.getChartSize(label);
-                        if (_chartSize) {
-                            if (w < _chartSize.width) w = _chartSize.width;
-                            if (h < _chartSize.height) h = _chartSize.height;
-                        }
-                    });
-                    w = w * scale;
-                    h = h * scale;
-
+                    var prev = {};
                     labels = _.sortBy(labels, ['row', 'col']);
                     labels.forEach(function (label) {
                         var key = label.labelId;
                         sizes[key] = {};
-                        sizes[key].x = label.col * (w + gap) + gap;
-                        sizes[key].y = label.row * (h + 2*gap) + gap;
-                        sizes[key].w = w;
-                        sizes[key].h = h;
-                        var right = sizes[key].x + sizes[key].w + gap;
-                        if (width < right) {
-                            width = right;
-                        }
-                        var bottom = sizes[key].y + sizes[key].h + gap;
-                        if (height < bottom) {
-                            height = bottom;
+                        var _chartSize = service.getChartSize(label);
+                        if (_chartSize) {
+                            sizes[key].x = label.col * (genericSize + gap) + gap;
+                            sizes[key].y = label.row * (genericSize + gap) + gap;
+
+                            var ratio = _chartSize.width / _chartSize.height;
+                            if (label.sizeX >= label.sizeY) {
+                                sizes[key].h = genericSize * label.sizeY;
+                                sizes[key].w = sizes[key].h * ratio;
+                            }
+                            else {
+                                sizes[key].w = genericSize * label.sizeX;
+                                sizes[key].h = sizes[key].w / ratio;
+                            }
+
+                            if (prev.row === label.row &&
+                                prev.col < label.col &&
+                                prev.right > sizes[key].x) {
+                                sizes[key].x = prev.right;
+                            }
+
+                            var right = sizes[key].x + sizes[key].w + gap;
+                            if (width < right) {
+                                width = right;
+                            }
+                            var bottom = sizes[key].y + sizes[key].h + gap;
+                            if (height < bottom) {
+                                height = bottom;
+                            }
+
+                            prev.row = label.row;
+                            prev.col = label.col;
+                            prev.right = right;
                         }
                     });
 
@@ -351,7 +362,7 @@ angular.module('transmartBaseUi')
                             context.strokeStyle = 'grey';
                             context.strokeRect(x, y, w, h);
                             context.drawImage(image, x, y, w, h);
-                            context.font = "100px Georgia";
+                            context.font = "70px Georgia";
                             context.textAlign = "center";
                             context.fillText(title, x + w / 2, y - 30);
                             var args = {
@@ -366,6 +377,7 @@ angular.module('transmartBaseUi')
                 }//if the box exists
 
             };
+
 
             return service;
         }]);
