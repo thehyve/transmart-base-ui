@@ -184,7 +184,7 @@ angular.module('transmartBaseUi')
                 _barChart.xUnits();
             }
             _barChart.yAxis().ticks(5);
-            _barChart.yAxisLabel('# subjects', 16);
+            _barChart.yAxisLabel('# subjects');
 
             return _barChart;
         };

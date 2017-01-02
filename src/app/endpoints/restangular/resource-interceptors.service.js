@@ -7,7 +7,7 @@
  * @name ResourceInterceptors
  */
 angular.module('tmEndpoints')
-    .factory('ResourceInterceptorService', ['AlertService', function (AlertService) {
+    .factory('ResourceInterceptors', ['AlertService', function (AlertService) {
 
         var service = {};
 

@@ -7,7 +7,6 @@ describe('QueryParserService Unit Tests', function () {
     });
 
     var QueryParserService,
-        CohortSelectionService,
         QueryBuilderMocks,
         CohortSelectionCtrl,
         $controller,
@@ -23,11 +22,10 @@ describe('QueryParserService Unit Tests', function () {
         rangedFilter,
         nodeTypeMapping;
 
-    beforeEach(inject(function (_QueryParserService_, _CohortSelectionService_, _QueryBuilderMocks_,
+    beforeEach(inject(function (_QueryParserService_, _QueryBuilderMocks_,
                                 _$controller_, _AlertService_, _$rootScope_,
                                 _StudyListService_, _TreeNodeService_, _$q_) {
         QueryParserService = _QueryParserService_;
-        CohortSelectionService = _CohortSelectionService_;
         QueryBuilderMocks = _QueryBuilderMocks_;
         scope = _$rootScope_.$new();
         $controller = _$controller_;
@@ -63,13 +61,6 @@ describe('QueryParserService Unit Tests', function () {
         spyOn(TreeNodeService, 'expandConcept').and.callFake(function(node, conceptSplit) {
             var nodeName = conceptSplit[conceptSplit.length - 1];
             return $q.when(nodeTypeMapping[nodeName]);
-        });
-
-        var box = {
-            studyId: 'an-id'
-        };
-        spyOn(CohortSelectionService, 'getBox').and.callFake(function () {
-            return box;
         });
 
 
