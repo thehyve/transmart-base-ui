@@ -40,6 +40,8 @@ angular.module('transmartBaseUi')
                     children: [{}],
                     insertBefore: function (styleElement, refNode) {
                     },
+                    removeChild: function () {
+                    },
                     querySelectorAll: function () {
                         return [node1];
                     }

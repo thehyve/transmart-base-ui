@@ -160,6 +160,7 @@ angular.module('transmartBaseUi')
                 // Safari NS namespace fix
                 svgString = svgString.replace(/NS\d+:href/g, 'xlink:href');
 
+                svgNode.removeChild(styleElement);
                 return svgString;
             };
 
@@ -293,50 +294,44 @@ angular.module('transmartBaseUi')
                     var ctrl = box.ctrl,
                         cs = ctrl.cs,
                         labels = cs.cohortLabels,
-                        genericSize = 1000,
+                        scale = 10,
                         gap = 100,
                         width = gap,
                         height = gap,
                         sizes = {};
 
-                    var prev = {};
+                    var w = 0, h = 0;
+                    labels.forEach(function (label) {
+                        var _chartSize = service.getChartSize(label);
+                        if (_chartSize) {
+                            var _w = _chartSize.width / label.sizeX;
+                            var _h = _chartSize.height / label.sizeY;
+                            if (w < _w) w = _w;
+                            if (h < _h) h = _h;
+                        }
+                    });
+                    w = w * scale;
+                    h = h * scale;
+
                     labels = _.sortBy(labels, ['row', 'col']);
                     labels.forEach(function (label) {
                         var key = label.labelId;
-                        sizes[key] = {};
                         var _chartSize = service.getChartSize(label);
-                        if (_chartSize) {
-                            sizes[key].x = label.col * (genericSize + gap) + gap;
-                            sizes[key].y = label.row * (genericSize + gap) + gap;
+                        sizes[key] = {};
+                        sizes[key].x = label.col * (w + gap) + gap;
+                        sizes[key].y = label.row * (h + 2 * gap) + 2 * gap;
+                        sizes[key].outerW = w * label.sizeX + gap * (label.sizeX - 1);
+                        sizes[key].outerH = h * label.sizeY + gap * (label.sizeY - 1);
+                        sizes[key].w = _chartSize.width * scale + gap * (label.sizeX - 1);
+                        sizes[key].h = _chartSize.height * scale + gap * (label.sizeY - 1);
 
-                            var ratio = _chartSize.width / _chartSize.height;
-                            if (label.sizeX >= label.sizeY) {
-                                sizes[key].h = genericSize * label.sizeY;
-                                sizes[key].w = sizes[key].h * ratio;
-                            }
-                            else {
-                                sizes[key].w = genericSize * label.sizeX;
-                                sizes[key].h = sizes[key].w / ratio;
-                            }
-
-                            if (prev.row === label.row &&
-                                prev.col < label.col &&
-                                prev.right > sizes[key].x) {
-                                sizes[key].x = prev.right;
-                            }
-
-                            var right = sizes[key].x + sizes[key].w + gap;
-                            if (width < right) {
-                                width = right;
-                            }
-                            var bottom = sizes[key].y + sizes[key].h + gap;
-                            if (height < bottom) {
-                                height = bottom;
-                            }
-
-                            prev.row = label.row;
-                            prev.col = label.col;
-                            prev.right = right;
+                        var right = sizes[key].x + sizes[key].outerW + gap;
+                        if (width < right) {
+                            width = right;
+                        }
+                        var bottom = sizes[key].y + sizes[key].outerH + gap;
+                        if (height < bottom) {
+                            height = bottom;
                         }
                     });
 
@@ -359,12 +354,10 @@ angular.module('transmartBaseUi')
                                 y = sizes[key].y,
                                 w = sizes[key].w,
                                 h = sizes[key].h;
-                            context.strokeStyle = 'grey';
-                            context.strokeRect(x, y, w, h);
                             context.drawImage(image, x, y, w, h);
-                            context.font = "70px Georgia";
+                            context.font = "100px Georgia";
                             context.textAlign = "center";
-                            context.fillText(title, x + w / 2, y - 30);
+                            context.fillText(title, x + w / 2, y - 50);
                             var args = {
                                 canvas: canvas,
                                 imageType: imgType
@@ -375,9 +368,7 @@ angular.module('transmartBaseUi')
                     });
 
                 }//if the box exists
-
             };
-
 
             return service;
         }]);
