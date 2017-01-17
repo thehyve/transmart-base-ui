@@ -24,7 +24,6 @@ angular.module('tmEndpoints')
                 var cookieKeyForEndpoints = 'transmart-base-ui-v2.endpoints';
                 var cookieKeyForSelectedEndpoint = 'transmart-base-ui-v2.selectedEndpoint';
 
-
                 //a flag indicating if the user is logged in or not
                 service.loggedIn = false;
 

@@ -119,7 +119,8 @@ angular.module('transmartBaseUi')
              * @returns {string}
              */
             service.getSVGString = function (label) {
-                var chartPanel = angular.element('#cohort-chart-panel-' + label.labelId);
+                var chartPanelId = '#cohort-chart-panel-' + label.boxId + '-' +label.labelId;
+                var chartPanel = angular.element(chartPanelId);
                 var svgNode = angular.element(chartPanel.children()[1]).find('svg')[0];
                 svgNode.setAttribute('xlink', 'http://www.w3.org/1999/xlink');
                 //
