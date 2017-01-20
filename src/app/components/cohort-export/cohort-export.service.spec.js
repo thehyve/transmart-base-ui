@@ -56,12 +56,25 @@ describe('CohortExportService', function () {
     });
 
     describe('getSVGString', function () {
-        var elm, label;
+        var elm, label, chartPanelId;
         beforeEach(function () {
             elm = CohortExportMocks.getChartSVGMock();
             label = CohortExportMocks.getChartLabelMock();
-            spyOn(angular, 'element').and.callFake(function () {
-                return CohortExportMocks.getAngularElementMock(elm);
+            chartPanelId = '#cohort-chart-panel-' + label.boxId + '-' +label.labelId;
+
+            spyOn(angular, 'element').and.callFake(function (inputVar) {
+                // to ensure that the correct chart panel is found
+                if( typeof inputVar === 'string') {
+                    if(inputVar === chartPanelId) {
+                        return CohortExportMocks.getAngularElementMock(elm);
+                    }
+                    else {
+                        return undefined;
+                    }
+                }
+                else {
+                    return CohortExportMocks.getAngularElementMock(elm);
+                }
             });
             spyOn(CohortExportService, 'getElementStyles').and.callThrough();
         });

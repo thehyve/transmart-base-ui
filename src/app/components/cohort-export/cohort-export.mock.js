@@ -74,6 +74,7 @@ angular.module('transmartBaseUi')
 
             service.getChartLabelMock = function () {
                 return {
+                    boxId: 'box-id',
                     labelId: 'label-id',
                     name: 'label-name',
                     study: {
