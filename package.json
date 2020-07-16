@@ -54,7 +54,7 @@
     "karma-ng-html2js-preprocessor": "~1.0.0",
     "karma-phantomjs-launcher": "~1.0.0",
     "karma-phantomjs-shim": "~1.4.0",
-    "lodash": "~4.11.2",
+    "lodash": "~4.17.19",
     "main-bower-files": "~2.13.0",
     "phantomjs-prebuilt": "~2.1.7",
     "protractor-cucumber-framework": "^0.6.0",
